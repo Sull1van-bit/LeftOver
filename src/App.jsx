@@ -31,7 +31,9 @@ const ICONS = {
   trendingUp: "M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6h-6z",
   trendingDown: "M16 18l2.29-2.29-4.88-4.88-4 4L2 7.41 3.41 6l6 6 4-4 6.3 6.29L22 12v6h-6z",
   calendar: "M17 13h-5v5h5v-5zM16 2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-1V2h-2zm3 18H5V8h14v12z",
-  arrowRight: "M10 17l5-5-5-5v10z"
+  arrowRight: "M10 17l5-5-5-5v10z",
+  checkCircle: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z",
+  shipping: "M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9l1.96 2.5H17V9.5h2.5zM18 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z",
 };
 
 // --- UTILITY FUNCTIONS ---
@@ -44,6 +46,8 @@ const formatYAxisLabel = (value) => {
   }
   return value.toString();
 };
+
+const getCurrentTimestamp = () => new Date().toISOString();
 
 // --- DATA UTILITIES ---
 const generateChartData = (days) => {
@@ -69,11 +73,18 @@ const generateChartData = (days) => {
 
 const initialData7Days = generateChartData(7);
 
-// --- INITIAL MOCK DATA ---
+// --- INITIAL MOCK DATA (with updated order structure) ---
 const initialMockData = {
   summary: { totalSales: 7275000, productsListed: 12, remainingStock: 23, dailyChart: initialData7Days.overviewChart, },
   expiringProducts: [ { id: 1, name: "Chocolate Croissant", stock: 5, timeLeft: "02:15:30" }, { id: 2, name: "Whole Wheat Bread", stock: 8, timeLeft: "03:40:15" }, { id: 3, name: "Sugar Donut", stock: 10, timeLeft: "04:05:00" }, ],
-  allOrders: [ { id: 'ORD-765', customer: 'John Doe', items: 1, total: 112500, status: 'Needs Shipping', date: '2025-07-24', address: '1 Merdeka St, Jakarta', phone: '081234567890', products: [{name: 'Chocolate Croissant', qty: 1, price: 112500}] }, { id: 'ORD-764', customer: 'Jane Smith', items: 2, total: 375000, status: 'Completed', date: '2025-07-24', address: '2 Sudirman St, Jakarta', phone: '081234567891', products: [{name: 'Sugar Donut', qty: 2, price: 75000}, {name: 'White Bread', qty: 1, price: 225000}] }, { id: 'ORD-763', customer: 'Ahmad Fauzi', items: 1, total: 187500, status: 'Completed', date: '2025-07-23', address: '3 Gatot Subroto St, Jakarta', phone: '081234567892', products: [{name: 'Pandan Cake', qty: 1, price: 187500}] }, { id: 'ORD-762', customer: 'Dewi Anggraini', items: 3, total: 675000, status: 'Cancelled', date: '2025-07-23', reason: 'Cancelled by buyer', address: '4 Thamrin St, Jakarta', phone: '081234567893', products: [{name: 'Chicken Pastel', qty: 3, price: 225000}] }, { id: 'ORD-761', customer: 'Eko Prasetyo', items: 2, total: 420000, status: 'Shipped', date: '2025-07-22', address: '5 Asia Afrika St, Jakarta', phone: '081234567894', products: [{name: 'Whole Wheat Bread', qty: 2, price: 210000}] }, ],
+  allOrders: [
+      { id: 'ORD-765', customer: 'John Doe', items: 1, total: 112500, status: 'Needs Confirmation', date: '2025-07-24', address: '1 Merdeka St, Jakarta', phone: '081234567890', products: [{name: 'Chocolate Croissant', qty: 1, price: 112500}], courier: null, trackingNumber: null, statusHistory: [{ status: 'Needs Confirmation', timestamp: '2025-07-24T10:00:00Z' }] },
+      { id: 'ORD-766', customer: 'Siti Aminah', items: 1, total: 180000, status: 'Preparing', date: '2025-07-24', address: 'Jl. Kebon Sirih No. 10, Jakarta', phone: '081234567895', products: [{name: 'Whole Wheat Bread', qty: 1, price: 180000}], courier: null, trackingNumber: null, statusHistory: [{ status: 'Needs Confirmation', timestamp: '2025-07-24T09:30:00Z' }, { status: 'Preparing', timestamp: '2025-07-24T09:35:00Z' }] },
+      { id: 'ORD-767', customer: 'Budi Hartono', items: 2, total: 150000, status: 'Awaiting Pickup', date: '2025-07-24', address: 'Jl. MH Thamrin Kav. 5, Jakarta', phone: '081234567896', products: [{name: 'Sugar Donut', qty: 2, price: 75000}], courier: 'GoSend', trackingNumber: 'GK-123456789', statusHistory: [{ status: 'Needs Confirmation', timestamp: '2025-07-24T08:00:00Z' }, { status: 'Preparing', timestamp: '2025-07-24T08:05:00Z' }, { status: 'Awaiting Pickup', timestamp: '2025-07-24T08:20:00Z' }] },
+      { id: 'ORD-761', customer: 'Eko Prasetyo', items: 2, total: 420000, status: 'In Transit', date: '2025-07-22', address: '5 Asia Afrika St, Jakarta', phone: '081234567894', products: [{name: 'Whole Wheat Bread', qty: 2, price: 210000}], courier: 'GrabExpress', trackingNumber: 'GE-987654321', statusHistory: [{ status: 'Needs Confirmation', timestamp: '2025-07-22T11:00:00Z' }, { status: 'Preparing', timestamp: '2025-07-22T11:05:00Z' }, { status: 'Awaiting Pickup', timestamp: '2025-07-22T11:30:00Z' }, { status: 'In Transit', timestamp: '2025-07-22T12:00:00Z' }] },
+      { id: 'ORD-764', customer: 'Jane Smith', items: 2, total: 375000, status: 'Completed', date: '2025-07-24', address: '2 Sudirman St, Jakarta', phone: '081234567891', products: [{name: 'Sugar Donut', qty: 2, price: 75000}, {name: 'White Bread', qty: 1, price: 225000}], courier: 'Maxim', trackingNumber: 'MX-555444333', statusHistory: [{ status: 'Needs Confirmation', timestamp: '2025-07-23T14:00:00Z' }, { status: 'Preparing', timestamp: '2025-07-23T14:05:00Z' }, { status: 'Awaiting Pickup', timestamp: '2025-07-23T14:30:00Z' }, { status: 'In Transit', timestamp: '2025-07-23T15:00:00Z' }, { status: 'Completed', timestamp: '2025-07-24T10:00:00Z' }] },
+      { id: 'ORD-762', customer: 'Dewi Anggraini', items: 3, total: 675000, status: 'Cancelled', date: '2025-07-23', reason: 'Cancelled by buyer', address: '4 Thamrin St, Jakarta', phone: '081234567893', products: [{name: 'Chicken Pastel', qty: 3, price: 225000}], courier: null, trackingNumber: null, statusHistory: [{ status: 'Needs Confirmation', timestamp: '2025-07-23T09:00:00Z' }, { status: 'Cancelled', timestamp: '2025-07-23T09:05:00Z' }] },
+  ],
   allProducts: [
     { id: 1, name: "Chocolate Croissant", images: ['https://placehold.co/600x600/EFE3C2/123524?text=Bread%201'], price: 112500, discountPrice: null, stock: 5, sales: 15, status: 'Live', desc: 'Crispy croissant with a premium melted chocolate filling.', views: 350, conversion: 0.042 },
     { id: 2, name: "Whole Wheat Bread", images: ['https://placehold.co/600x600/EFE3C2/123524?text=Bread'], price: 180000, discountPrice: 150000, stock: 8, sales: 22, status: 'Live', desc: 'Healthy whole wheat bread, great for breakfast.', views: 510, conversion: 0.043 },
@@ -81,67 +92,15 @@ const initialMockData = {
     { id: 4, name: "Pandan Cake", images: ['https://placehold.co/600x600/EFE3C2/123524?text=Cake'], price: 375000, discountPrice: null, stock: 0, sales: 5, status: 'Out of Stock', desc: 'Fragrant pandan cake with a soft texture.', views: 150, conversion: 0.033 },
     { id: 5, name: "Chicken Pastel", images: [], price: 45000, discountPrice: null, stock: 15, sales: 0, status: 'In Review', desc: 'Savory pastel with a chicken and vegetable filling.', views: 45, conversion: 0 },
   ],
-  promotions: [
-    {
-      id: 1,
-      name: "Flash Bread Discount",
-      type: "Product Discount",
-      status: "Ongoing",
-      startDate: "2025-07-24T00:00:00",
-      endDate: "2025-07-25T23:59:59",
-      desc: "Get a 20% discount on all bread products. Perfect for breakfast or an afternoon snack!",
-      discountedProducts: [{productId: 2, discountPercentage: 20}],
-      performance: { products_sold: 150, revenue: 18750000 }
-    },
-    {
-      id: 2,
-      name: "Cake Price Cut",
-      type: "Product Discount",
-      status: "Upcoming",
-      startDate: "2025-07-26T00:00:00",
-      endDate: "2025-07-28T23:59:59",
-      desc: "Special discount for our delicious cakes.",
-      discountedProducts: [{productId: 4, discountPercentage: 10}],
-      performance: null
-    },
-    {
-      id: 3,
-      name: "Payday Promo",
-      type: "Product Discount",
-      status: "Finished",
-      startDate: "2025-06-25T00:00:00",
-      endDate: "2025-06-26T23:59:59",
-      desc: "Enjoy special prices on our best-selling products during the payday period.",
-      discountedProducts: [{productId: 1, discountPercentage: 15}, {productId: 3, discountPercentage: 15}],
-      performance: { products_sold: 320, revenue: 67500000 }
-    },
-  ],
-  dataCompass: {
-    kpi: [
-        { name: "Revenue (GMV)", value: "Rp 1.275.000", change: "+5.2%", isPositive: true },
-        { name: "Orders", value: "82", change: "+8.1%", isPositive: true },
-        { name: "Conversion Rate", value: "3.5%", change: "-0.5%", isPositive: false },
-        { name: "Visitors", value: "1,250", change: "+12.0%", isPositive: true },
-    ],
-    growthCenter: [
-        { id: 1, task: "Optimize 'Chicken Pastel' product images", desc: "High-quality images can increase conversion.", potential: "+15% sales potential", action: "Optimize" },
-        { id: 2, task: "Create a discount promo for leftover products", desc: "Sell out stock before it expires to reduce losses.", potential: "+10% revenue potential", action: "Create Promo" },
-        { id: 3, task: "Complete the description for 'Pandan Cake'", desc: "A clear description attracts more buyers.", potential: "+5% clicks potential", action: "Edit Product" },
-    ],
-    sources: [
-        { name: "Organic Search", value: "65%", change: "+15.2%", isPositive: true },
-        { name: "Social Media", value: "20%", change: "+8.1%", isPositive: true },
-        { name: "Direct", value: "10%", change: "-2.5%", isPositive: false },
-        { name: "Referral", value: "5%", change: "+3.0%", isPositive: true },
-    ]
-  }
+  promotions: [ { id: 1, name: "Flash Bread Discount", type: "Product Discount", status: "Ongoing", startDate: "2025-07-24T00:00:00", endDate: "2025-07-25T23:59:59", desc: "Get a 20% discount on all bread products. Perfect for breakfast or an afternoon snack!", discountedProducts: [{productId: 2, discountPercentage: 20}], performance: { products_sold: 150, revenue: 18750000 } }, { id: 2, name: "Cake Price Cut", type: "Product Discount", status: "Upcoming", startDate: "2025-07-26T00:00:00", endDate: "2025-07-28T23:59:59", desc: "Special discount for our delicious cakes.", discountedProducts: [{productId: 4, discountPercentage: 10}], performance: null }, { id: 3, name: "Payday Promo", type: "Product Discount", status: "Finished", startDate: "2025-06-25T00:00:00", endDate: "2025-06-26T23:59:59", desc: "Enjoy special prices on our best-selling products during the payday period.", discountedProducts: [{productId: 1, discountPercentage: 15}, {productId: 3, discountPercentage: 15}], performance: { products_sold: 320, revenue: 67500000 } }, ],
+  dataCompass: { kpi: [ { name: "Revenue (GMV)", value: "Rp 1.275.000", change: "+5.2%", isPositive: true }, { name: "Orders", value: "82", change: "+8.1%", isPositive: true }, { name: "Conversion Rate", value: "3.5%", change: "-0.5%", isPositive: false }, { name: "Visitors", value: "1,250", change: "+12.0%", isPositive: true }, ], growthCenter: [ { id: 1, task: "Optimize 'Chicken Pastel' product images", desc: "High-quality images can increase conversion.", potential: "+15% sales potential", action: "Optimize" }, { id: 2, task: "Create a discount promo for leftover products", desc: "Sell out stock before it expires to reduce losses.", potential: "+10% revenue potential", action: "Create Promo" }, { id: 3, task: "Complete the description for 'Pandan Cake'", desc: "A clear description attracts more buyers.", potential: "+5% clicks potential", action: "Edit Product" }, ], sources: [ { name: "Organic Search", value: "65%", change: "+15.2%", isPositive: true }, { name: "Social Media", value: "20%", change: "+8.1%", isPositive: true }, { name: "Direct", value: "10%", change: "-2.5%", isPositive: false }, { name: "Referral", value: "5%", change: "+3.0%", isPositive: true }, ] }
 };
 
 // --- Reusable Components ---
 const Card = ({ children, className = '' }) => (<div className={`bg-white rounded-xl shadow-sm ${className}`}>{children}</div>);
 const TabButton = ({ label, isActive, onClick }) => (<button onClick={onClick} className={`px-4 py-2 text-sm font-semibold rounded-md transition-colors whitespace-nowrap ${isActive ? 'bg-[#EFE3C2] text-[#123524] shadow-md' : 'text-gray-600 hover:bg-gray-200'}`}>{label}</button>);
 const StatusBadge = ({ status }) => {
-  const styles = { 'Live': 'bg-green-100 text-green-800', 'Ongoing': 'bg-green-100 text-green-800', 'In Review': 'bg-yellow-100 text-yellow-800', 'Upcoming': 'bg-yellow-100 text-yellow-800', 'Out of Stock': 'bg-red-100 text-red-800', 'Finished': 'bg-gray-200 text-gray-800', 'Needs Shipping': 'bg-orange-100 text-orange-800', 'Shipped': 'bg-blue-100 text-blue-800', 'Cancelled': 'bg-gray-200 text-gray-800', 'Completed': 'bg-gray-200 text-gray-800' };
+  const styles = { 'Live': 'bg-green-100 text-green-800', 'Ongoing': 'bg-green-100 text-green-800', 'In Review': 'bg-yellow-100 text-yellow-800', 'Upcoming': 'bg-yellow-100 text-yellow-800', 'Out of Stock': 'bg-red-100 text-red-800', 'Finished': 'bg-gray-200 text-gray-800', 'Needs Confirmation': 'bg-rose-100 text-rose-800', 'Preparing': 'bg-amber-100 text-amber-800', 'Awaiting Pickup': 'bg-sky-100 text-sky-800', 'In Transit': 'bg-blue-100 text-blue-800', 'Cancelled': 'bg-gray-200 text-gray-800', 'Completed': 'bg-teal-100 text-teal-800' };
   return <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${styles[status] || 'bg-gray-100'}`}>{status}</span>;
 };
 const Modal = ({ children, isOpen, onClose, size = 'max-w-2xl' }) => {
@@ -392,35 +351,67 @@ const HomepageView = ({ data, onAddProductClick, onAddPromotionClick }) => {
                  <h2 className="text-xl font-bold text-[#123524]">Sales & Engagement Analysis</h2>
                  <p className="text-sm text-gray-500 mb-4">Performance trends for the last 7 days. Note: Metrics are scaled independently to show trends.</p>
                  <MultiLineChart
-                    chartData={data.summary.dailyChart}
-                    metrics={salesAnalysisMetrics}
-                    colors={salesAnalysisColors}
+                   chartData={data.summary.dailyChart}
+                   metrics={salesAnalysisMetrics}
+                   colors={salesAnalysisColors}
                  />
                  <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mt-4 pt-4 border-t">
-                    {salesAnalysisMetrics.map((metric, i) => (
-                        <span key={metric.key} className="flex items-center text-sm text-gray-600">
-                            <span className="w-3 h-3 rounded-full mr-2" style={{backgroundColor: salesAnalysisColors[i]}}></span>
-                            {metric.name}
-                        </span>
-                    ))}
+                      {salesAnalysisMetrics.map((metric, i) => (
+                          <span key={metric.key} className="flex items-center text-sm text-gray-600">
+                              <span className="w-3 h-3 rounded-full mr-2" style={{backgroundColor: salesAnalysisColors[i]}}></span>
+                              {metric.name}
+                          </span>
+                      ))}
                  </div>
             </div>
         </div>
     );
 }
 
-const ManageOrdersView = ({ data, onDetailClick }) => {
+const ManageOrdersView = ({ data, onDetailClick, onUpdateStatus }) => {
     const [activeTab, setActiveTab] = useState('All');
-    const tabs = ['All', 'Needs Shipping', 'Shipped', 'Completed', 'Cancelled'];
+    const tabs = ['All', 'Needs Confirmation', 'Preparing', 'Awaiting Pickup', 'In Transit', 'Completed', 'Cancelled'];
     const filteredOrders = data.allOrders.filter(order => activeTab === 'All' || order.status === activeTab);
+
+    const ActionButton = ({ order }) => {
+        switch (order.status) {
+            case 'Needs Confirmation':
+                return <button onClick={() => onUpdateStatus(order, 'Accept')} className="font-semibold text-sm bg-green-600 text-white px-3 py-1.5 rounded-md hover:bg-green-700 transition-colors">Accept Order</button>;
+            case 'Preparing':
+                return <button onClick={() => onUpdateStatus(order, 'Generate Label')} className="font-semibold text-sm bg-blue-600 text-white px-3 py-1.5 rounded-md hover:bg-blue-700 transition-colors">Generate Label</button>;
+            case 'Awaiting Pickup':
+                return <button onClick={() => onUpdateStatus(order, 'Ship')} className="font-semibold text-sm bg-sky-600 text-white px-3 py-1.5 rounded-md hover:bg-sky-700 transition-colors">Mark as Shipped</button>;
+            case 'In Transit':
+                 return <button onClick={() => onUpdateStatus(order, 'Complete')} className="font-semibold text-sm bg-teal-600 text-white px-3 py-1.5 rounded-md hover:bg-teal-700 transition-colors">Mark as Completed</button>;
+            default:
+                return <button onClick={() => onDetailClick(order)} className="font-medium text-[#3E7B27] hover:underline">Details</button>;
+        }
+    };
+
     return (
         <div className="p-6"><h1 className="text-2xl font-bold text-gray-800 mb-4">Management Order</h1><Card className="p-0">
             <div className="p-6 flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div className="flex space-x-2 overflow-x-auto pb-2">{tabs.map(tab => (<TabButton key={tab} label={`${tab} (${data.allOrders.filter(o => tab === 'All' || o.status === tab).length})`} isActive={activeTab === tab} onClick={() => setActiveTab(tab)} />))}</div>
                 <div className="relative w-full sm:w-auto"><input type="text" placeholder="Search orders..." className="w-full sm:w-64 pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#85A947] text-gray-900" /><Icon path={ICONS.search} className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" /></div>
             </div>
-            <div className="overflow-x-auto"><table className="w-full text-sm text-left text-gray-500"><thead className="text-xs text-gray-700 uppercase bg-gray-50"><tr><th scope="col" className="px-6 py-3">Order ID</th><th scope="col" className="px-6 py-3">Customer</th><th scope="col" className="px-6 py-3">Total</th><th scope="col" className="px-6 py-3">Status</th><th scope="col" className="px-6 py-3">Date</th><th scope="col" className="px-6 py-3 text-center">Action</th></tr></thead>
-                <tbody>{filteredOrders.map(order => (<tr key={order.id} className="bg-white border-b hover:bg-gray-50"><td className="px-6 py-4 font-medium text-gray-900">{order.id}</td><td className="px-6 py-4">{order.customer}</td><td className="px-6 py-4">Rp {order.total.toLocaleString('id-ID')}</td><td className="px-6 py-4"><StatusBadge status={order.status} /></td><td className="px-6 py-4">{order.date}</td><td className="px-6 py-4 text-center"><button onClick={() => onDetailClick(order)} className="font-medium text-[#3E7B27] hover:underline transition-transform duration-150 active:scale-95">Details</button></td></tr>))}</tbody>
+            <div className="overflow-x-auto"><table className="w-full text-sm text-left text-gray-500"><thead className="text-xs text-gray-700 uppercase bg-gray-50"><tr><th scope="col" className="px-6 py-3">Order ID</th><th scope="col" className="px-6 py-3">Customer</th><th scope="col" className="px-6 py-3">Shipping Info</th><th scope="col" className="px-6 py-3">Status</th><th scope="col" className="px-6 py-3">Date</th><th scope="col" className="px-6 py-3 text-center">Action</th></tr></thead>
+                <tbody>{filteredOrders.map(order => (<tr key={order.id} className="bg-white border-b hover:bg-gray-50">
+                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{order.id}</td>
+                    <td className="px-6 py-4">{order.customer}</td>
+                    <td className="px-6 py-4">
+                        {order.courier ? (
+                            <div>
+                                <p className="font-semibold text-gray-700">{order.courier}</p>
+                                <p className="text-xs text-gray-500 font-mono">{order.trackingNumber}</p>
+                            </div>
+                        ) : (
+                            <span className="text-gray-400">—</span>
+                        )}
+                    </td>
+                    <td className="px-6 py-4"><StatusBadge status={order.status} /></td>
+                    <td className="px-6 py-4">{order.date}</td>
+                    <td className="px-6 py-4 text-center"><ActionButton order={order} /></td>
+                </tr>))}</tbody>
             </table></div></Card></div>
     );
 }
@@ -803,6 +794,10 @@ const AddEditProductPage = ({ product, onSave, onCancel }) => {
     const [selectedImage, setSelectedImage] = useState(product?.images?.[0] || null);
     const [isFormValid, setIsFormValid] = useState(false);
 
+    // State for drag-and-drop functionality
+    const [draggedItemIndex, setDraggedItemIndex] = useState(null);
+    const [draggedOverItemIndex, setDraggedOverItemIndex] = useState(null);
+
     const MIN_IMAGES = 1;
     const MAX_IMAGES = 9;
 
@@ -833,6 +828,35 @@ const AddEditProductPage = ({ product, onSave, onCancel }) => {
     const handleRemoveImage = (imageUrlToRemove) => {
         setImages(prevImages => prevImages.filter(img => img !== imageUrlToRemove));
     };
+
+    // --- Drag and Drop Handlers ---
+    const handleDragStart = (e, index) => {
+        setDraggedItemIndex(index);
+        e.dataTransfer.effectAllowed = 'move';
+    };
+
+    const handleDragEnter = (e, index) => {
+        e.preventDefault();
+        setDraggedOverItemIndex(index);
+    };
+
+    const handleDrop = (e, targetIndex) => {
+        // Prevent drop on itself
+        if (draggedItemIndex === targetIndex) return;
+
+        // Reorder the images array
+        const newImages = [...images];
+        const draggedItem = newImages.splice(draggedItemIndex, 1)[0];
+        newImages.splice(targetIndex, 0, draggedItem);
+        setImages(newImages);
+    };
+
+    const handleDragEnd = () => {
+        setDraggedItemIndex(null);
+        setDraggedOverItemIndex(null);
+    };
+    // --- End of Drag and Drop Handlers ---
+
 
     const handleSave = (status) => {
         const productData = {
@@ -891,7 +915,7 @@ const AddEditProductPage = ({ product, onSave, onCancel }) => {
                         <div className="lg:col-span-2">
                             <Card className="p-6">
                                 <h3 className="text-lg font-semibold text-gray-800 mb-1">Product Gallery</h3>
-                                <p className="text-sm text-gray-500 mb-4">Upload a minimum of {MIN_IMAGES} photo to list the product.</p>
+                                <p className="text-sm text-gray-500 mb-4">Upload a minimum of {MIN_IMAGES} photo. Drag to reorder.</p>
                                 <div className="space-y-4">
                                     {images.length === 0 ? (
                                         <label htmlFor="file-upload-main" className="w-full aspect-square flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
@@ -907,17 +931,34 @@ const AddEditProductPage = ({ product, onSave, onCancel }) => {
                                             <div className="w-full aspect-square bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
                                                 <img src={selectedImage} onError={(e) => e.target.src='https://placehold.co/600x600/f0f0f0/cccccc?text=Error'} alt="Selected" className="w-full h-full object-cover"/>
                                             </div>
-                                            <div className="grid grid-cols-5 gap-2">
+                                            <div
+                                                className="flex gap-2 overflow-x-auto pb-2"
+                                                onDrop={handleDrop}
+                                                onDragOver={(e) => e.preventDefault()}
+                                            >
                                                 {images.map((img, index) => (
-                                                    <div key={index} className="relative aspect-square group">
+                                                    <div
+                                                        key={img + index} // Use a more stable key if possible
+                                                        className={`relative aspect-square h-20 w-20 flex-shrink-0 group transition-all duration-300 ${draggedItemIndex === index ? 'opacity-50 scale-105' : 'opacity-100 scale-100'}`}
+                                                        draggable
+                                                        onDragStart={(e) => handleDragStart(e, index)}
+                                                        onDragEnter={(e) => handleDragEnter(e, index)}
+                                                        onDragEnd={handleDragEnd}
+                                                        onDrop={(e) => handleDrop(e, index)}
+                                                        onDragOver={(e) => e.preventDefault()}
+                                                    >
                                                         <img src={img} onClick={() => setSelectedImage(img)} className={`w-full h-full object-cover rounded-md cursor-pointer border-2 transition-all ${selectedImage === img ? 'border-[#3E7B27]' : 'border-transparent hover:border-gray-400'}`} alt={`thumbnail ${index+1}`} />
                                                         <button onClick={() => handleRemoveImage(img)} className="absolute -top-1 -right-1 bg-red-600 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                                                             <Icon path={ICONS.close} className="w-3 h-3"/>
                                                         </button>
+                                                        {/* Visual indicator for drop position */}
+                                                        {draggedOverItemIndex === index && draggedItemIndex !== index && (
+                                                            <div className="absolute inset-0 bg-green-500/30 border-2 border-dashed border-green-700 rounded-lg pointer-events-none"></div>
+                                                        )}
                                                     </div>
                                                 ))}
                                                 {images.length < MAX_IMAGES && (
-                                                    <label htmlFor="file-upload-thumb" className="aspect-square flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                                                    <label htmlFor="file-upload-thumb" className="aspect-square h-20 w-20 flex-shrink-0 flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
                                                         <Icon path={ICONS.plus} className="w-6 h-6 text-gray-400"/>
                                                         <input id="file-upload-thumb" name="file-upload" type="file" multiple accept="image/*" onChange={handleImageUpload} className="sr-only" />
                                                     </label>
@@ -948,64 +989,93 @@ const AddEditProductPage = ({ product, onSave, onCancel }) => {
     );
 };
 
-const OrderDetailView = ({ order, onClose }) => (
-    <Modal isOpen={!!order} onClose={onClose} size="max-w-3xl">
-        {order && <>
-            <div className="p-6 flex justify-between items-start bg-gray-100 text-gray-800 rounded-t-2xl border-b">
-                <div>
-                    <h2 className="text-2xl font-bold">Order Details</h2>
-                    <p className="text-sm text-gray-500">{order.id}</p>
-                </div>
-                <button onClick={onClose} className="text-gray-500 hover:text-gray-800"><Icon path={ICONS.close} /></button>
-            </div>
-            <div className="p-6 bg-gray-50">
-                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                     <div className="md:col-span-2 bg-white p-4 rounded-lg border">
-                         <h3 className="font-semibold text-gray-800 mb-2">Customer Info</h3>
-                         <p className="font-medium">{order.customer}</p>
-                         <p className="text-sm text-gray-600">{order.phone}</p>
-                         <p className="text-sm text-gray-600 mt-1">{order.address}</p>
-                     </div>
-                     <div className="bg-white p-4 rounded-lg border">
-                          <h3 className="font-semibold text-gray-800 mb-2">Order Status</h3>
-                          <StatusBadge status={order.status} />
-                          <p className="text-sm text-gray-600 mt-2">Date: {order.date}</p>
-                     </div>
-                 </div>
+const OrderDetailView = ({ order, onClose }) => {
+    const StatusTimeline = ({ history }) => (
+        <ol className="relative border-l border-gray-200 ml-3">
+            {history.map((item, index) => (
+                <li key={index} className="mb-6 ml-6">
+                    <span className="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -left-3 ring-8 ring-white">
+                        <Icon path={ICONS.checkCircle} className="w-4 h-4 text-blue-600"/>
+                    </span>
+                    <h3 className="flex items-center mb-1 text-md font-semibold text-gray-900">{item.status}</h3>
+                    <time className="block mb-2 text-sm font-normal leading-none text-gray-400">{new Date(item.timestamp).toLocaleString('id-ID', { dateStyle: 'full', timeStyle: 'short' })}</time>
+                </li>
+            ))}
+        </ol>
+    );
 
-                 <div>
-                     <h3 className="font-semibold text-gray-800 mb-2">Product Summary ({order.items} item)</h3>
-                     <div className="flow-root">
-                         <ul role="list" className="-my-4 divide-y divide-gray-200 border-y border-gray-200">
-                             {order.products.map((p, i) => (
-                                 <li key={i} className="flex items-center py-4">
-                                     <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
-                                         <img src={`https://placehold.co/64x64/EFE3C2/123524?text=${p.name.substring(0,1)}`} alt={p.name} className="h-full w-full object-cover object-center" />
-                                     </div>
-                                     <div className="ml-4 flex flex-1 flex-col">
-                                         <div>
-                                             <div className="flex justify-between text-base font-medium text-gray-900">
-                                                 <h3>{p.name}</h3>
-                                                 <p className="ml-4">Rp {(p.qty * p.price).toLocaleString('id-ID')}</p>
-                                             </div>
-                                             <p className="mt-1 text-sm text-gray-500">{p.qty} x Rp {p.price.toLocaleString('id-ID')}</p>
-                                         </div>
-                                     </div>
-                                 </li>
-                             ))}
-                         </ul>
-                     </div>
-                 </div>
-            </div>
-            <div className="p-6 flex justify-end items-center bg-gray-100 rounded-b-2xl">
-                <div className="text-right">
-                    <p className="text-sm text-gray-500">Total Payment</p>
-                    <p className="text-2xl font-bold text-gray-800">Rp {order.total.toLocaleString('id-ID')}</p>
+    return (
+        <Modal isOpen={!!order} onClose={onClose} size="max-w-3xl">
+            {order && <>
+                <div className="p-6 flex justify-between items-start bg-gray-100 text-gray-800 rounded-t-2xl border-b">
+                    <div>
+                        <h2 className="text-2xl font-bold">Order Details</h2>
+                        <p className="text-sm text-gray-500">{order.id}</p>
+                    </div>
+                    <button onClick={onClose} className="text-gray-500 hover:text-gray-800"><Icon path={ICONS.close} /></button>
                 </div>
-            </div>
-        </>}
-    </Modal>
-);
+                <div className="p-6 bg-gray-50">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Left Column */}
+                        <div className="space-y-6">
+                            <div className="bg-white p-4 rounded-lg border">
+                                <h3 className="font-semibold text-gray-800 mb-2">Customer Info</h3>
+                                <p className="font-medium">{order.customer}</p>
+                                <p className="text-sm text-gray-600">{order.phone}</p>
+                                <p className="text-sm text-gray-600 mt-1">{order.address}</p>
+                            </div>
+                            <div className="bg-white p-4 rounded-lg border">
+                                <h3 className="font-semibold text-gray-800 mb-2">Shipping Details</h3>
+                                {order.courier ? (
+                                    <>
+                                        <p className="font-medium">{order.courier}</p>
+                                        <p className="text-sm text-gray-600 font-mono">{order.trackingNumber}</p>
+                                    </>
+                                ) : (
+                                    <p className="text-sm text-gray-500">Shipping label has not been generated.</p>
+                                )}
+                            </div>
+                             <div>
+                                <h3 className="font-semibold text-gray-800 mb-2">Product Summary ({order.items} item)</h3>
+                                <div className="flow-root bg-white border rounded-lg p-4">
+                                    <ul role="list" className="-my-4 divide-y divide-gray-200">
+                                        {order.products.map((p, i) => (
+                                            <li key={i} className="flex items-center py-4">
+                                                <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                                                    <img src={`https://placehold.co/64x64/EFE3C2/123524?text=${p.name.substring(0,1)}`} alt={p.name} className="h-full w-full object-cover object-center" />
+                                                </div>
+                                                <div className="ml-4 flex flex-1 flex-col">
+                                                    <div>
+                                                        <div className="flex justify-between text-base font-medium text-gray-900">
+                                                            <h3>{p.name}</h3>
+                                                            <p className="ml-4">Rp {(p.qty * p.price).toLocaleString('id-ID')}</p>
+                                                        </div>
+                                                        <p className="mt-1 text-sm text-gray-500">{p.qty} x Rp {p.price.toLocaleString('id-ID')}</p>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        {/* Right Column */}
+                        <div className="bg-white p-4 rounded-lg border">
+                             <h3 className="font-semibold text-gray-800 mb-4">Order History</h3>
+                             <StatusTimeline history={order.statusHistory} />
+                        </div>
+                    </div>
+                </div>
+                <div className="p-6 flex justify-end items-center bg-gray-100 rounded-b-2xl">
+                    <div className="text-right">
+                        <p className="text-sm text-gray-500">Total Payment</p>
+                        <p className="text-2xl font-bold text-gray-800">Rp {order.total.toLocaleString('id-ID')}</p>
+                    </div>
+                </div>
+            </>}
+        </Modal>
+    );
+}
 
 const PromotionDetailView = ({ promo, onClose }) => (
     <Modal isOpen={!!promo} onClose={onClose} size="max-w-2xl">
@@ -1061,6 +1131,78 @@ const PromotionDetailView = ({ promo, onClose }) => (
         </>}
     </Modal>
 );
+
+// --- New Order Management Modals ---
+const GenerateShippingModal = ({ isOpen, onClose, onConfirm, order }) => {
+    const [courier, setCourier] = useState('');
+    const couriers = ['GoSend', 'GrabExpress', 'Maxim'];
+
+    const handleConfirm = () => {
+        if (!courier) {
+            alert("Please select a courier.");
+            return;
+        }
+        onConfirm(order.id, courier);
+        onClose();
+    };
+
+    return (
+        <Modal isOpen={isOpen} onClose={onClose} size="max-w-md">
+            <div className="p-6">
+                <div className="flex items-start gap-4">
+                    <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 sm:mx-0 sm:h-10 sm:w-10">
+                        <Icon path={ICONS.shipping} className="h-6 w-6 text-blue-600" />
+                    </div>
+                    <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                        <h3 className="text-lg leading-6 font-bold text-gray-900">Generate Shipping Label</h3>
+                        <div className="mt-2">
+                            <p className="text-sm text-gray-500">Select a courier to generate a tracking number and schedule a pickup for order <span className="font-semibold">{order?.id}</span>.</p>
+                        </div>
+                    </div>
+                </div>
+                 <div className="mt-6">
+                    <label htmlFor="courier" className="block text-sm font-medium text-gray-700">Courier</label>
+                    <select id="courier" name="courier" value={courier} onChange={(e) => setCourier(e.target.value)} className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-[#3E7B27] focus:border-[#3E7B27] sm:text-sm rounded-md text-gray-900">
+                        <option value="">Select a courier...</option>
+                        {couriers.map(c => <option key={c} value={c}>{c}</option>)}
+                    </select>
+                </div>
+            </div>
+            <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse rounded-b-2xl">
+                <button type="button" onClick={handleConfirm} className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-[#3E7B27] text-base font-medium text-white hover:bg-[#123524] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#85A947] sm:ml-3 sm:w-auto sm:text-sm">
+                    Schedule Pickup
+                </button>
+                <button type="button" onClick={onClose} className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                    Cancel
+                </button>
+            </div>
+        </Modal>
+    );
+};
+
+const UpdateStatusConfirmationModal = ({ isOpen, onClose, onConfirm, order, newStatus }) => {
+    const messages = {
+        'Accept': { title: 'Accept Order?', message: `Are you sure you want to accept order ${order?.id}?`, icon: ICONS.checkCircle, color: 'green' },
+        'Ship': { title: 'Mark as Shipped?', message: `Confirm that courier has picked up order ${order?.id}.`, icon: ICONS.shipping, color: 'sky' },
+        'Complete': { title: 'Mark as Completed?', message: `Confirm that order ${order?.id} has been delivered to the customer.`, icon: ICONS.checkCircle, color: 'teal' },
+    };
+    const info = messages[newStatus] || {};
+
+    return (
+        <Modal isOpen={isOpen} onClose={onClose} size="max-w-md">
+            <div className="p-6 text-center">
+                <Icon path={info.icon} className={`mx-auto h-12 w-12 text-${info.color}-500`} />
+                <h3 className="text-lg font-medium text-[#123524] mt-4">{info.title}</h3>
+                <p className="mt-2 text-sm text-gray-600">{info.message}</p>
+            </div>
+            <div className="mt-6 p-6 flex justify-center gap-4 bg-gray-50 rounded-b-2xl">
+                <button onClick={onClose} className="px-6 py-2 rounded-md font-semibold text-gray-700 bg-gray-200 hover:bg-gray-300 transition-colors">Cancel</button>
+                <button onClick={() => onConfirm(order.id)} className={`px-6 py-2 rounded-md font-semibold text-${info.color}-700 bg-${info.color}-100 hover:bg-${info.color}-200 transition-colors`}>Confirm</button>
+            </div>
+        </Modal>
+    );
+};
+
 
 // --- Layout Components ---
 const Sidebar = ({ activeMenu, setActiveMenu, activeSubMenu, setActiveSubMenu, hasNewOrder, setView }) => {
@@ -1118,15 +1260,18 @@ const DashboardLayout = ({ data, setData, setView, setEditingProduct, setEditing
     const [activeSubMenu, setActiveSubMenu] = useState(null);
     const [hasNewOrder, setHasNewOrder] = useState(false);
     
+    // State for modals
     const [orderToDetail, setOrderToDetail] = useState(null);
     const [promoToDetail, setPromoToDetail] = useState(null);
     const [productToDelete, setProductToDelete] = useState(null);
     const [productToDiscount, setProductToDiscount] = useState(null);
+    const [orderToUpdate, setOrderToUpdate] = useState(null);
+    const [updateAction, setUpdateAction] = useState(null); // 'Accept', 'Generate Label', 'Ship', 'Complete'
 
     useEffect(() => {
         const newOrderTimer = setTimeout(() => {
             setHasNewOrder(true);
-            const newOrder = { id: `ORD-${Math.floor(Math.random() * 100) + 800}`, customer: 'New Customer', items: 1, total: 270000, status: 'Needs Shipping', date: '2025-07-24', address: '1 New St, Jakarta', phone: '081200001111', products: [{name: 'Sugar Donut', qty: 1, price: 270000}] };
+            const newOrder = { id: `ORD-${Math.floor(Math.random() * 100) + 800}`, customer: 'New Customer', items: 1, total: 270000, status: 'Needs Confirmation', date: '2025-07-24', address: '1 New St, Jakarta', phone: '081200001111', products: [{name: 'Sugar Donut', qty: 1, price: 270000}], courier: null, trackingNumber: null, statusHistory: [{ status: 'Needs Confirmation', timestamp: getCurrentTimestamp() }] };
             setData(prevData => ({ ...prevData, allOrders: [newOrder, ...prevData.allOrders] }));
         }, 15000);
         return () => clearTimeout(newOrderTimer);
@@ -1159,11 +1304,46 @@ const DashboardLayout = ({ data, setData, setView, setEditingProduct, setEditing
         setView('editPromotion');
     };
 
+    const handleOrderStatusUpdate = (order, action) => {
+        setOrderToUpdate(order);
+        setUpdateAction(action);
+    };
+
+    const confirmOrderStatusUpdate = (orderId, details) => {
+        setData(prevData => {
+            const newOrders = [...prevData.allOrders];
+            const orderIndex = newOrders.findIndex(o => o.id === orderId);
+            if (orderIndex === -1) return prevData;
+
+            const order = newOrders[orderIndex];
+            let newStatus = '';
+
+            switch (updateAction) {
+                case 'Accept': newStatus = 'Preparing'; break;
+                case 'Generate Label': 
+                    newStatus = 'Awaiting Pickup';
+                    order.courier = details.courier;
+                    order.trackingNumber = `${details.courier.substring(0,2).toUpperCase()}-${Math.floor(100000000 + Math.random() * 900000000)}`;
+                    break;
+                case 'Ship': newStatus = 'In Transit'; break;
+                case 'Complete': newStatus = 'Completed'; break;
+                default: return prevData;
+            }
+            
+            order.status = newStatus;
+            order.statusHistory.push({ status: newStatus, timestamp: getCurrentTimestamp() });
+            
+            return { ...prevData, allOrders: newOrders };
+        });
+        setOrderToUpdate(null);
+        setUpdateAction(null);
+    };
+
     const renderContent = () => {
         const view = activeSubMenu || activeMenu;
         switch (view) {
             case 'Homepage': return <HomepageView data={data} onAddProductClick={() => { setEditingProduct(null); setView('addProduct'); }} onAddPromotionClick={handleAddPromotionClick} />;
-            case 'Manage Orders': return <ManageOrdersView data={data} onDetailClick={setOrderToDetail} />;
+            case 'Manage Orders': return <ManageOrdersView data={data} onDetailClick={setOrderToDetail} onUpdateStatus={handleOrderStatusUpdate} />;
             case 'Manage Cancellations': return <ManageCancellationsView data={data} onDetailClick={setOrderToDetail} />;
             case 'Manage Products': return <ManageProductsView 
                 data={data} 
@@ -1197,6 +1377,20 @@ const DashboardLayout = ({ data, setData, setView, setEditingProduct, setEditing
                 onClose={() => setProductToDiscount(null)}
                 onApply={handleApplyDiscount}
                 product={productToDiscount}
+            />
+            {/* Order Status Modals */}
+            <GenerateShippingModal 
+                isOpen={updateAction === 'Generate Label'}
+                onClose={() => setUpdateAction(null)}
+                onConfirm={(orderId, courier) => confirmOrderStatusUpdate(orderId, { courier })}
+                order={orderToUpdate}
+            />
+            <UpdateStatusConfirmationModal
+                isOpen={['Accept', 'Ship', 'Complete'].includes(updateAction)}
+                onClose={() => setUpdateAction(null)}
+                onConfirm={(orderId) => confirmOrderStatusUpdate(orderId)}
+                order={orderToUpdate}
+                newStatus={updateAction}
             />
         </div>
     );
