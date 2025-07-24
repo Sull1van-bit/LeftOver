@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 
 // --- ICONS (Inline SVG for Portability) ---
 const Icon = ({ path, className = "w-6 h-6" }) => (
@@ -51,13 +51,50 @@ const getCurrentTimestamp = () => new Date().toISOString();
 
 // --- DATA UTILITIES ---
 const generateChartData = (days) => {
-    const endDate = new Date('2025-07-24'); // Use a fixed end date for consistency
+    const endDate = new Date('2025-07-24');
     const data = [];
-    for (let i = 0; i < days; i++) {
+    let numPoints, interval, unit;
+
+    // Determine the granularity of data points based on the total duration
+    if (days <= 31) { // Daily for a month or less
+        numPoints = days;
+        interval = 1;
+        unit = 'day';
+    } else if (days <= 180) { // Weekly for up to 6 months
+        numPoints = Math.ceil(days / 7);
+        interval = 7;
+        unit = 'day';
+    } else if (days <= 365 * 2) { // Monthly for up to 2 years
+        numPoints = Math.ceil(days / 30);
+        interval = 1;
+        unit = 'month';
+    } else { // Yearly for > 2 years
+        numPoints = Math.ceil(days / 365);
+        interval = 1;
+        unit = 'year';
+    }
+
+    for (let i = 0; i < numPoints; i++) {
         const date = new Date(endDate);
-        date.setDate(endDate.getDate() - (days - 1 - i));
+        if (unit === 'day') {
+            date.setDate(endDate.getDate() - (numPoints - 1 - i) * interval);
+        } else if (unit === 'month') {
+            date.setMonth(endDate.getMonth() - (numPoints - 1 - i) * interval);
+        } else if (unit === 'year') {
+            date.setFullYear(endDate.getFullYear() - (numPoints - 1 - i) * interval);
+        }
+
+        let dayLabel;
+        if (unit === 'year') {
+            dayLabel = date.getFullYear().toString();
+        } else if (unit === 'month') {
+            dayLabel = date.toLocaleString('default', { month: 'short', year: '2-digit' });
+        } else { // day or week
+            dayLabel = `${date.getMonth() + 1}/${date.getDate()}`;
+        }
+        
         data.push({
-            day: `${date.getMonth() + 1}/${date.getDate()}`,
+            day: dayLabel,
             sales: Math.floor(Math.random() * 85000000) + 25000000,
             visitors: Math.floor(Math.random() * 200) + 100,
             orders: Math.floor(Math.random() * 40) + 10,
@@ -71,7 +108,87 @@ const generateChartData = (days) => {
     };
 };
 
+
 const initialData7Days = generateChartData(7);
+
+// --- MOCK DATA FOR DYNAMIC KPIS ---
+const kpiDataByRange = {
+    'Last 7 Days': [
+        { name: "Revenue (GMV)", value: "Rp 58.750.000", change: "+5.2%", isPositive: true },
+        { name: "Orders", value: "320", change: "+8.1%", isPositive: true },
+        { name: "Conversion Rate", value: "3.5%", change: "-0.5%", isPositive: false },
+        { name: "Visitors", value: "4.250", change: "+12.0%", isPositive: true },
+    ],
+    'Last 14 Days': [
+        { name: "Revenue (GMV)", value: "Rp 112.300.000", change: "+3.1%", isPositive: true },
+        { name: "Orders", value: "610", change: "+4.5%", isPositive: true },
+        { name: "Conversion Rate", value: "3.8%", change: "+0.3%", isPositive: true },
+        { name: "Visitors", value: "8.100", change: "+9.2%", isPositive: true },
+    ],
+    'Last 30 Days': [
+        { name: "Revenue (GMV)", value: "Rp 245.800.000", change: "+1.8%", isPositive: true },
+        { name: "Orders", value: "1.350", change: "+2.2%", isPositive: true },
+        { name: "Conversion Rate", value: "4.1%", change: "+0.6%", isPositive: true },
+        { name: "Visitors", value: "17.500", change: "+5.8%", isPositive: true },
+    ],
+    '3 Months': [
+        { name: "Revenue (GMV)", value: "Rp 750.1M", change: "+1.5%", isPositive: true },
+        { name: "Orders", value: "4.150", change: "+1.9%", isPositive: true },
+        { name: "Conversion Rate", value: "4.2%", change: "+0.7%", isPositive: true },
+        { name: "Visitors", value: "53.000", change: "+4.5%", isPositive: true },
+    ],
+    '6 Months': [
+        { name: "Revenue (GMV)", value: "Rp 1.5B", change: "+1.2%", isPositive: true },
+        { name: "Orders", value: "8.500", change: "+1.5%", isPositive: true },
+        { name: "Conversion Rate", value: "4.3%", change: "+0.8%", isPositive: true },
+        { name: "Visitors", value: "110.000", change: "+4.1%", isPositive: true },
+    ],
+    '1 Year': [
+        { name: "Revenue (GMV)", value: "Rp 3.1B", change: "+0.9%", isPositive: true },
+        { name: "Orders", value: "17.200", change: "+1.1%", isPositive: true },
+        { name: "Conversion Rate", value: "4.4%", change: "+0.9%", isPositive: true },
+        { name: "Visitors", value: "230.000", change: "+3.8%", isPositive: true },
+    ],
+    '2 Years': [
+        { name: "Revenue (GMV)", value: "Rp 6.5B", change: "+0.7%", isPositive: true },
+        { name: "Orders", value: "35.000", change: "+0.9%", isPositive: true },
+        { name: "Conversion Rate", value: "4.5%", change: "+1.0%", isPositive: true },
+        { name: "Visitors", value: "480.000", change: "+3.5%", isPositive: true },
+    ],
+    '3 Years': [
+        { name: "Revenue (GMV)", value: "Rp 10.2B", change: "+0.6%", isPositive: true },
+        { name: "Orders", value: "54.000", change: "+0.8%", isPositive: true },
+        { name: "Conversion Rate", value: "4.6%", change: "+1.1%", isPositive: true },
+        { name: "Visitors", value: "750.000", change: "+3.2%", isPositive: true },
+    ],
+    '4 Years': [
+        { name: "Revenue (GMV)", value: "Rp 14.1B", change: "+0.5%", isPositive: true },
+        { name: "Orders", value: "75.000", change: "+0.7%", isPositive: true },
+        { name: "Conversion Rate", value: "4.7%", change: "+1.2%", isPositive: true },
+        { name: "Visitors", value: "1.1M", change: "+2.9%", isPositive: true },
+    ],
+    '5 Years': [
+        { name: "Revenue (GMV)", value: "Rp 18.5B", change: "+0.4%", isPositive: true },
+        { name: "Orders", value: "98.000", change: "+0.6%", isPositive: true },
+        { name: "Conversion Rate", value: "4.8%", change: "+1.3%", isPositive: true },
+        { name: "Visitors", value: "1.5M", change: "+2.6%", isPositive: true },
+    ],
+};
+
+// --- [NEW] MOCK DATA FOR DYNAMIC MARKETING IMPACT ---
+const marketingImpactDataByRange = {
+    'Last 7 Days': { withMarketing: { revenue: "Rp 7.275.000", orders: 45, conversion: "4.8%", note: "Includes sales from ongoing promotions." }, withoutMarketing: { revenue: "Rp 5.950.000", orders: 38, conversion: "3.9%", note: "Estimated performance without discounts." } },
+    'Last 14 Days': { withMarketing: { revenue: "Rp 15.100.000", orders: 92, conversion: "5.1%", note: "Includes sales from ongoing promotions." }, withoutMarketing: { revenue: "Rp 12.500.000", orders: 75, conversion: "4.1%", note: "Estimated performance without discounts." } },
+    'Last 30 Days': { withMarketing: { revenue: "Rp 32.800.000", orders: 205, conversion: "5.5%", note: "Includes sales from ongoing promotions." }, withoutMarketing: { revenue: "Rp 28.150.000", orders: 160, conversion: "4.5%", note: "Estimated performance without discounts." } },
+    '3 Months': { withMarketing: { revenue: "Rp 98.4M", orders: 615, conversion: "5.6%", note: "Includes sales from ongoing promotions." }, withoutMarketing: { revenue: "Rp 84.4M", orders: 480, conversion: "4.6%", note: "Estimated performance without discounts." } },
+    '6 Months': { withMarketing: { revenue: "Rp 195M", orders: 1200, conversion: "5.7%", note: "Includes sales from ongoing promotions." }, withoutMarketing: { revenue: "Rp 165M", orders: 950, conversion: "4.7%", note: "Estimated performance without discounts." } },
+    '1 Year': { withMarketing: { revenue: "Rp 400M", orders: 2500, conversion: "5.8%", note: "Includes sales from ongoing promotions." }, withoutMarketing: { revenue: "Rp 330M", orders: 1900, conversion: "4.8%", note: "Estimated performance without discounts." } },
+    '2 Years': { withMarketing: { revenue: "Rp 850M", orders: 5200, conversion: "5.9%", note: "Includes sales from ongoing promotions." }, withoutMarketing: { revenue: "Rp 680M", orders: 4000, conversion: "4.9%", note: "Estimated performance without discounts." } },
+    '3 Years': { withMarketing: { revenue: "Rp 1.3B", orders: 8000, conversion: "6.0%", note: "Includes sales from ongoing promotions." }, withoutMarketing: { revenue: "Rp 1.0B", orders: 6200, conversion: "5.0%", note: "Estimated performance without discounts." } },
+    '4 Years': { withMarketing: { revenue: "Rp 1.8B", orders: 11000, conversion: "6.1%", note: "Includes sales from ongoing promotions." }, withoutMarketing: { revenue: "Rp 1.4B", orders: 8500, conversion: "5.1%", note: "Estimated performance without discounts." } },
+    '5 Years': { withMarketing: { revenue: "Rp 2.4B", orders: 14500, conversion: "6.2%", note: "Includes sales from ongoing promotions." }, withoutMarketing: { revenue: "Rp 1.9B", orders: 11000, conversion: "5.2%", note: "Estimated performance without discounts." } },
+};
+
 
 // --- INITIAL MOCK DATA (with updated order structure) ---
 const initialMockData = {
@@ -102,7 +219,11 @@ const initialMockData = {
     { id: 5, name: "Chicken Pastel", images: [], price: 45000, discountPrice: null, stock: 15, sales: 0, status: 'In Review', desc: 'Savory pastel with a chicken and vegetable filling.', views: 45, conversion: 0 },
   ],
   promotions: [ { id: 1, name: "Flash Bread Discount", type: "Product Discount", status: "Ongoing", startDate: "2025-07-24T00:00:00", endDate: "2025-07-25T23:59:59", desc: "Get a 20% discount on all bread products. Perfect for breakfast or an afternoon snack!", discountedProducts: [{productId: 2, discountPercentage: 20}], performance: { products_sold: 150, revenue: 18750000 } }, { id: 2, name: "Cake Price Cut", type: "Product Discount", status: "Upcoming", startDate: "2025-07-26T00:00:00", endDate: "2025-07-28T23:59:59", desc: "Special discount for our delicious cakes.", discountedProducts: [{productId: 4, discountPercentage: 10}], performance: null }, { id: 3, name: "Payday Promo", type: "Product Discount", status: "Finished", startDate: "2025-06-25T00:00:00", endDate: "2025-06-26T23:59:59", desc: "Enjoy special prices on our best-selling products during the payday period.", discountedProducts: [{productId: 1, discountPercentage: 15}, {productId: 3, discountPercentage: 15}], performance: { products_sold: 320, revenue: 67500000 } }, ],
-  dataCompass: { kpi: [ { name: "Revenue (GMV)", value: "Rp 1.275.000", change: "+5.2%", isPositive: true }, { name: "Orders", value: "82", change: "+8.1%", isPositive: true }, { name: "Conversion Rate", value: "3.5%", change: "-0.5%", isPositive: false }, { name: "Visitors", value: "1,250", change: "+12.0%", isPositive: true }, ], growthCenter: [ { id: 1, task: "Optimize 'Chicken Pastel' product images", desc: "High-quality images can increase conversion.", potential: "+15% sales potential", action: "Optimize" }, { id: 2, task: "Create a discount promo for leftover products", desc: "Sell out stock before it expires to reduce losses.", potential: "+10% revenue potential", action: "Create Promo" }, { id: 3, task: "Complete the description for 'Pandan Cake'", desc: "A clear description attracts more buyers.", potential: "+5% clicks potential", action: "Edit Product" }, ], sources: [ { name: "Organic Search", value: "65%", change: "+15.2%", isPositive: true }, { name: "Social Media", value: "20%", change: "+8.1%", isPositive: true }, { name: "Direct", value: "10%", change: "-2.5%", isPositive: false }, { name: "Referral", value: "5%", change: "+3.0%", isPositive: true }, ] }
+  dataCompass: {
+    kpi: kpiDataByRange,
+    marketingImpact: marketingImpactDataByRange,
+    sources: [ { name: "Organic Search", value: "65%", change: "+15.2%", isPositive: true }, { name: "Social Media", value: "20%", change: "+8.1%", isPositive: true }, { name: "Direct", value: "10%", change: "-2.5%", isPositive: false }, { name: "Referral", value: "5%", change: "+3.0%", isPositive: true }, ]
+  }
 };
 
 // --- Reusable Components ---
@@ -164,22 +285,60 @@ const DiscountModal = ({ isOpen, onClose, onApply, product }) => {
         </Modal>
     );
 };
+
+// --- [MODIFIED] DateRangePicker as Dropdown ---
 const DateRangePicker = ({ selectedRange, onRangeChange }) => {
-    const ranges = ['Last 7 Days', 'Last 14 Days', 'Last 30 Days'];
+    const [isOpen, setIsOpen] = useState(false);
+    const ranges = ['Last 7 Days', 'Last 14 Days', 'Last 30 Days', '3 Months', '6 Months', '1 Year', '2 Years', '3 Years', '4 Years', '5 Years'];
+    const dropdownRef = useRef(null);
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [dropdownRef]);
+
+    const handleSelect = (range) => {
+        onRangeChange(range);
+        setIsOpen(false);
+    };
+
     return (
-        <div className="flex items-center gap-2 bg-white border rounded-lg p-1 text-sm font-medium text-gray-700">
-            {ranges.map(range => (
-                <button
-                    key={range}
-                    onClick={() => onRangeChange(range)}
-                    className={`px-3 py-1 rounded-md transition-colors whitespace-nowrap ${selectedRange === range ? 'bg-[#3E7B27] text-white shadow' : 'hover:bg-gray-100'}`}
-                >
-                    {range}
-                </button>
-            ))}
+        <div className="relative" ref={dropdownRef}>
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="flex items-center justify-between w-48 bg-white border rounded-lg p-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3E7B27]"
+            >
+                <span>{selectedRange}</span>
+                <Icon path={ICONS.chevronDown} className={`w-5 h-5 text-gray-400 transition-transform ${isOpen ? 'transform rotate-180' : ''}`} />
+            </button>
+            {isOpen && (
+                <div className="absolute z-10 mt-2 w-48 bg-white rounded-md shadow-lg border">
+                    <ul className="py-1">
+                        {ranges.map(range => (
+                            <li key={range}>
+                                <button
+                                    onClick={() => handleSelect(range)}
+                                    className={`w-full text-left px-4 py-2 text-sm ${selectedRange === range ? 'bg-[#EFE3C2] text-[#123524] font-semibold' : 'text-gray-700 hover:bg-gray-100'}`}
+                                >
+                                    {range}
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
         </div>
     );
 };
+
 
 // --- CHART COMPONENTS (Updated with Y-Axis) ---
 const LineChart = ({ data, color, dataKey, labelKey }) => {
@@ -365,12 +524,12 @@ const HomepageView = ({ data, onAddProductClick, onAddPromotionClick }) => {
                    colors={salesAnalysisColors}
                  />
                  <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mt-4 pt-4 border-t">
-                        {salesAnalysisMetrics.map((metric, i) => (
-                            <span key={metric.key} className="flex items-center text-sm text-gray-600">
-                                <span className="w-3 h-3 rounded-full mr-2" style={{backgroundColor: salesAnalysisColors[i]}}></span>
-                                {metric.name}
-                            </span>
-                        ))}
+                       {salesAnalysisMetrics.map((metric, i) => (
+                           <span key={metric.key} className="flex items-center text-sm text-gray-600">
+                               <span className="w-3 h-3 rounded-full mr-2" style={{backgroundColor: salesAnalysisColors[i]}}></span>
+                               {metric.name}
+                           </span>
+                       ))}
                  </div>
             </div>
         </div>
@@ -631,6 +790,31 @@ const MarketingView = ({ data, onDetailClick, onAddPromotionClick, onEditPromoti
     );
 }
 
+const getDaysFromRange = (range) => {
+    const parts = range.split(' ');
+    let value;
+    let unit;
+
+    if (parts.length === 3) { // "Last X Days"
+        value = parseInt(parts[1], 10);
+        unit = parts[2].toLowerCase();
+    } else if (parts.length === 2) { // "X Months/Year/Years"
+        value = parseInt(parts[0], 10);
+        unit = parts[1].toLowerCase();
+    } else {
+        return 7; // Default fallback
+    }
+
+    if (unit.startsWith('day')) {
+        return value;
+    } else if (unit.startsWith('month')) {
+        return value * 30;
+    } else if (unit.startsWith('year')) {
+        return value * 365;
+    }
+    return 7;
+};
+
 
 const DataCompassView = ({ data, allProducts }) => {
     const [activeTab, setActiveTab] = useState('Overview');
@@ -639,35 +823,35 @@ const DataCompassView = ({ data, allProducts }) => {
         overviewChart: initialData7Days.overviewChart,
         trafficChart: initialData7Days.trafficChart,
     });
-    // State baru untuk menyimpan data kinerja produk yang dinamis
     const [productPerformanceData, setProductPerformanceData] = useState(allProducts);
+    
+    const displayedKpis = data.dataCompass.kpi[dateRange] || data.dataCompass.kpi['Last 7 Days'];
+    const currentMarketingImpact = data.dataCompass.marketingImpact[dateRange] || data.dataCompass.marketingImpact['Last 7 Days'];
 
     useEffect(() => {
-        const days = parseInt(dateRange.split(' ')[1]);
+        const days = getDaysFromRange(dateRange);
         const newChartData = generateChartData(days);
         setCompassData({
             overviewChart: newChartData.overviewChart,
             trafficChart: newChartData.trafficChart,
         });
 
-        // Memperbarui data kinerja produk saat rentang tanggal berubah
-        // Ini adalah simulasi; dalam aplikasi nyata, Anda akan mengambil data ini dari server
+        // Simulate updating product performance data when date range changes
         const updatedProductData = allProducts.map(p => ({
             ...p,
-            // Mensimulasikan penjualan dan tampilan yang berbeda untuk setiap rentang tanggal
-            sales: Math.floor(Math.random() * (p.sales || 10) * (days / 2)) + Math.floor((p.sales || 10) / 2),
-            views: Math.floor(Math.random() * (p.views || 50) * (days / 2)) + Math.floor((p.views || 50) / 2),
+            sales: Math.floor(Math.random() * (p.sales || 10) * (days / 7)) + Math.floor((p.sales || 10)),
+            views: Math.floor(Math.random() * (p.views || 50) * (days / 7)) + Math.floor((p.views || 50)),
         }));
         setProductPerformanceData(updatedProductData);
 
     }, [dateRange, allProducts]);
-
-    const KPICard = ({ item }) => (
-        <Card className="p-4">
+    
+    const KPICard = ({ item, className = '' }) => (
+        <Card className={`p-4 flex flex-col h-full ${className}`}>
             <h3 className="text-sm font-medium text-gray-500">{item.name}</h3>
-            <div className="mt-2 flex items-baseline justify-between">
-                <p className="text-2xl font-bold text-gray-800">{item.value}</p>
-                <span className={`flex items-center text-sm font-semibold ${item.isPositive ? 'text-green-600' : 'text-red-600'}`}>
+            <div className="mt-2 flex items-end space-x-2 flex-grow">
+                <p className="text-3xl lg:text-4xl font-bold text-gray-800">{item.value}</p>
+                <span className={`flex items-center text-sm font-semibold ${item.isPositive ? 'text-green-600' : 'text-red-600'} pb-1`}>
                     <Icon path={item.isPositive ? ICONS.trendingUp : ICONS.trendingDown} className="w-4 h-4 mr-1"/>
                     {item.change}
                 </span>
@@ -689,11 +873,11 @@ const DataCompassView = ({ data, allProducts }) => {
                             <h3 className="text-lg font-bold text-gray-800">Traffic Trends</h3>
                             <p className="text-sm text-gray-500 mb-4">{dateRange}</p>
                             <MultiLineChart chartData={compassData.trafficChart} metrics={trafficMetrics} colors={['#3E7B27', '#85A947', '#D6C49A']} />
-                             <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mt-4 pt-4 border-t">
-                                 {trafficMetrics.map((metric, i) => (
-                                     <span key={metric.key} className="flex items-center text-sm text-gray-600"><span className="w-3 h-3 rounded-full mr-2" style={{backgroundColor: ['#3E7B27', '#85A947', '#D6C49A'][i]}}></span>{metric.name}</span>
-                                 ))}
-                             </div>
+                                <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mt-4 pt-4 border-t">
+                                    {trafficMetrics.map((metric, i) => (
+                                        <span key={metric.key} className="flex items-center text-sm text-gray-600"><span className="w-3 h-3 rounded-full mr-2" style={{backgroundColor: ['#3E7B27', '#85A947', '#D6C49A'][i]}}></span>{metric.name}</span>
+                                    ))}
+                                </div>
                         </Card>
                         <Card className="p-6">
                             <h3 className="text-lg font-bold text-gray-800 mb-4">Traffic Sources</h3>
@@ -714,7 +898,6 @@ const DataCompassView = ({ data, allProducts }) => {
                     </div>
                 );
             case 'Product Performance':
-                // Menggunakan state dinamis 'productPerformanceData' bukan 'allProducts' statis
                 const sortedBySales = [...productPerformanceData].sort((a,b) => b.sales - a.sales);
                 const sortedByViews = [...productPerformanceData].sort((a,b) => b.views - a.views);
                 return (
@@ -724,27 +907,27 @@ const DataCompassView = ({ data, allProducts }) => {
                                 <Card className="p-6">
                                    <h3 className="font-semibold text-gray-800 mb-4">Best Sellers (by Units Sold)</h3>
                                    <ul className="space-y-4">
-                                       {sortedBySales.slice(0, 5).map((p, i) => (
-                                           <li key={p.id} className="flex items-center gap-4 text-sm">
-                                               <span className="font-bold text-gray-400 w-4">{i+1}</span>
-                                               <img src={p.images[0] || 'https://placehold.co/80x80/f0f0f0/cccccc?text=...'} alt={p.name} className="w-10 h-10 rounded-md object-cover"/>
-                                               <span className="flex-grow font-medium text-gray-800 truncate">{p.name}</span>
-                                               <span className="font-semibold text-gray-600">{p.sales} sold</span>
-                                           </li>
-                                       ))}
+                                      {sortedBySales.slice(0, 5).map((p, i) => (
+                                          <li key={p.id} className="flex items-center gap-4 text-sm">
+                                              <span className="font-bold text-gray-400 w-4">{i+1}</span>
+                                              <img src={p.images[0] || 'https://placehold.co/80x80/f0f0f0/cccccc?text=...'} alt={p.name} className="w-10 h-10 rounded-md object-cover"/>
+                                              <span className="flex-grow font-medium text-gray-800 truncate">{p.name}</span>
+                                              <span className="font-semibold text-gray-600">{p.sales} sold</span>
+                                          </li>
+                                      ))}
                                    </ul>
                                 </Card>
                                  <Card className="p-6">
                                    <h3 className="font-semibold text-gray-800 mb-4">Most Viewed</h3>
                                    <ul className="space-y-4">
-                                       {sortedByViews.slice(0, 5).map((p, i) => (
-                                           <li key={p.id} className="flex items-center gap-4 text-sm">
-                                               <span className="font-bold text-gray-400 w-4">{i+1}</span>
-                                               <img src={p.images[0] || 'https://placehold.co/80x80/f0f0f0/cccccc?text=...'} alt={p.name} className="w-10 h-10 rounded-md object-cover"/>
-                                               <span className="flex-grow font-medium text-gray-800 truncate">{p.name}</span>
-                                               <span className="font-semibold text-gray-600">{p.views} views</span>
-                                           </li>
-                                       ))}
+                                      {sortedByViews.slice(0, 5).map((p, i) => (
+                                          <li key={p.id} className="flex items-center gap-4 text-sm">
+                                              <span className="font-bold text-gray-400 w-4">{i+1}</span>
+                                              <img src={p.images[0] || 'https://placehold.co/80x80/f0f0f0/cccccc?text=...'} alt={p.name} className="w-10 h-10 rounded-md object-cover"/>
+                                              <span className="flex-grow font-medium text-gray-800 truncate">{p.name}</span>
+                                              <span className="font-semibold text-gray-600">{p.views} views</span>
+                                          </li>
+                                      ))}
                                    </ul>
                                 </Card>
                             </div>
@@ -769,23 +952,6 @@ const DataCompassView = ({ data, allProducts }) => {
                                 ))}
                             </div>
                         </Card>
-                        <Card className="lg:col-span-3 p-6 bg-green-50 border border-green-200">
-                             <h3 className="text-lg font-bold text-[#123524] mb-4 flex items-center gap-2"><Icon path={ICONS.lightbulb} className="w-6 h-6 text-yellow-500"/>Growth Center</h3>
-                             <div className="divide-y divide-green-200">
-                                 {data.dataCompass.growthCenter.map(item => (
-                                     <div key={item.id} className="py-3 flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
-                                         <div className="flex-grow">
-                                             <p className="font-semibold text-green-900">{item.task}</p>
-                                             <p className="text-sm text-green-800/80">{item.desc}</p>
-                                         </div>
-                                         <div className="flex items-center gap-4 flex-shrink-0 mt-2 md:mt-0">
-                                             <span className="text-xs font-semibold bg-yellow-200 text-yellow-900 px-2 py-1 rounded-md">{item.potential}</span>
-                                             <button className="bg-[#3E7B27] text-white text-sm font-semibold px-4 py-1.5 rounded-md hover:bg-[#123524] transition-colors">{item.action}</button>
-                                         </div>
-                                     </div>
-                                 ))}
-                             </div>
-                        </Card>
                     </div>
                 );
         }
@@ -798,16 +964,65 @@ const DataCompassView = ({ data, allProducts }) => {
                 <DateRangePicker selectedRange={dateRange} onRangeChange={setDateRange} />
             </div>
             
-            <div className="border-b border-gray-200">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {displayedKpis.map(item => (
+                    <KPICard
+                        key={item.name}
+                        item={item}
+                        className={item.name.includes("Revenue") ? "md:col-span-3" : ""}
+                    />
+                ))}
+            </div>
+
+            {/* [MODIFIED] Marketing Impact Section */}
+            <div className="space-y-4 pt-6">
+                 <h2 className="text-xl font-bold text-gray-800">Marketing Impact Analysis ({dateRange})</h2>
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <Card className="p-6 bg-green-50 border border-green-200">
+                         <h3 className="font-bold text-lg text-green-800 mb-2">With Marketing</h3>
+                         <div className="space-y-2">
+                             <div>
+                                 <p className="text-sm text-gray-500">Revenue (GMV)</p>
+                                 <p className="text-2xl font-bold text-green-900">{currentMarketingImpact.withMarketing.revenue}</p>
+                             </div>
+                              <div>
+                                 <p className="text-sm text-gray-500">Orders</p>
+                                 <p className="text-2xl font-bold text-green-900">{currentMarketingImpact.withMarketing.orders}</p>
+                             </div>
+                              <div>
+                                 <p className="text-sm text-gray-500">Conversion Rate</p>
+                                 <p className="text-2xl font-bold text-green-900">{currentMarketingImpact.withMarketing.conversion}</p>
+                             </div>
+                         </div>
+                         <p className="text-xs text-gray-500 mt-4">{currentMarketingImpact.withMarketing.note}</p>
+                      </Card>
+                       <Card className="p-6 bg-gray-50 border">
+                         <h3 className="font-bold text-lg text-gray-700 mb-2">Without Marketing (Est.)</h3>
+                          <div className="space-y-2">
+                             <div>
+                                 <p className="text-sm text-gray-500">Revenue (GMV)</p>
+                                 <p className="text-2xl font-bold text-gray-800">{currentMarketingImpact.withoutMarketing.revenue}</p>
+                             </div>
+                              <div>
+                                 <p className="text-sm text-gray-500">Orders</p>
+                                 <p className="text-2xl font-bold text-gray-800">{currentMarketingImpact.withoutMarketing.orders}</p>
+                             </div>
+                              <div>
+                                 <p className="text-sm text-gray-500">Conversion Rate</p>
+                                 <p className="text-2xl font-bold text-gray-800">{currentMarketingImpact.withoutMarketing.conversion}</p>
+                             </div>
+                         </div>
+                         <p className="text-xs text-gray-500 mt-4">{currentMarketingImpact.withoutMarketing.note}</p>
+                      </Card>
+                 </div>
+            </div>
+            
+            <div className="border-b border-gray-200 pt-6">
                 <nav className="-mb-px flex space-x-6">
                     <button onClick={() => setActiveTab('Overview')} className={`py-3 px-1 border-b-2 font-semibold text-sm ${activeTab === 'Overview' ? 'border-[#123524] text-[#123524]' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}>Overview</button>
                     <button onClick={() => setActiveTab('Traffic')} className={`py-3 px-1 border-b-2 font-semibold text-sm ${activeTab === 'Traffic' ? 'border-[#123524] text-[#123524]' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}>Traffic</button>
                     <button onClick={() => setActiveTab('Product Performance')} className={`py-3 px-1 border-b-2 font-semibold text-sm ${activeTab === 'Product Performance' ? 'border-[#123524] text-[#123524]' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}>Product Performance</button>
                 </nav>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {data.dataCompass.kpi.map(item => <KPICard key={item.name} item={item} />)}
             </div>
             
             {renderContent()}
@@ -1276,7 +1491,7 @@ const Sidebar = ({ activeMenu, setActiveMenu, setView }) => {
 };
 
 const DashboardLayout = ({ data, setData, setView, setEditingProduct, setEditingPromotion }) => {
-    const [activeMenu, setActiveMenu] = useState('Homepage');
+    const [activeMenu, setActiveMenu] = useState('Data'); // Default to Data Compass
     const [hasNewOrder, setHasNewOrder] = useState(false);
     
     // State for modals
@@ -1370,7 +1585,10 @@ const DashboardLayout = ({ data, setData, setView, setEditingProduct, setEditing
                 onDiscountProductClick={setProductToDiscount}
             />;
             case 'Marketing': return <MarketingView data={data} onDetailClick={setPromoToDetail} onAddPromotionClick={handleAddPromotionClick} onEditPromotionClick={handleEditPromotionClick}/>;
-            case 'Data': return <DataCompassView data={data} allProducts={data.allProducts} />;
+            case 'Data': return <DataCompassView 
+                data={data} 
+                allProducts={data.allProducts}
+            />;
             default: return <div className="p-6 text-2xl font-bold text-gray-800">Page {activeMenu}</div>;
         }
     };
@@ -1641,7 +1859,7 @@ const AddEditPromotionPage = ({ promo, allProducts, onSave, onCancel }) => {
 // --- Main App Component ---
 export default function App() {
     const [data, setData] = useState(initialMockData);
-    const [view, setView] = useState('login'); // 'login', 'register', 'dashboard', 'addProduct', 'editProduct', 'addPromotion', 'editPromotion'
+    const [view, setView] = useState('dashboard'); // Default to dashboard for quick testing
     const [editingProduct, setEditingProduct] = useState(null);
     const [editingPromotion, setEditingPromotion] = useState(null);
 
