@@ -82,8 +82,17 @@ const initialMockData = {
       { id: 'ORD-766', customer: 'Siti Aminah', items: 1, total: 180000, status: 'Preparing', date: '2025-07-24', address: 'Jl. Kebon Sirih No. 10, Jakarta', phone: '081234567895', products: [{name: 'Whole Wheat Bread', qty: 1, price: 180000}], courier: null, trackingNumber: null, statusHistory: [{ status: 'Needs Confirmation', timestamp: '2025-07-24T09:30:00Z' }, { status: 'Preparing', timestamp: '2025-07-24T09:35:00Z' }] },
       { id: 'ORD-767', customer: 'Budi Hartono', items: 2, total: 150000, status: 'Awaiting Pickup', date: '2025-07-24', address: 'Jl. MH Thamrin Kav. 5, Jakarta', phone: '081234567896', products: [{name: 'Sugar Donut', qty: 2, price: 75000}], courier: 'GoSend', trackingNumber: 'GK-123456789', statusHistory: [{ status: 'Needs Confirmation', timestamp: '2025-07-24T08:00:00Z' }, { status: 'Preparing', timestamp: '2025-07-24T08:05:00Z' }, { status: 'Awaiting Pickup', timestamp: '2025-07-24T08:20:00Z' }] },
       { id: 'ORD-761', customer: 'Eko Prasetyo', items: 2, total: 420000, status: 'In Transit', date: '2025-07-22', address: '5 Asia Afrika St, Jakarta', phone: '081234567894', products: [{name: 'Whole Wheat Bread', qty: 2, price: 210000}], courier: 'GrabExpress', trackingNumber: 'GE-987654321', statusHistory: [{ status: 'Needs Confirmation', timestamp: '2025-07-22T11:00:00Z' }, { status: 'Preparing', timestamp: '2025-07-22T11:05:00Z' }, { status: 'Awaiting Pickup', timestamp: '2025-07-22T11:30:00Z' }, { status: 'In Transit', timestamp: '2025-07-22T12:00:00Z' }] },
-      { id: 'ORD-764', customer: 'Jane Smith', items: 2, total: 375000, status: 'Completed', date: '2025-07-24', address: '2 Sudirman St, Jakarta', phone: '081234567891', products: [{name: 'Sugar Donut', qty: 2, price: 75000}, {name: 'White Bread', qty: 1, price: 225000}], courier: 'Maxim', trackingNumber: 'MX-555444333', statusHistory: [{ status: 'Needs Confirmation', timestamp: '2025-07-23T14:00:00Z' }, { status: 'Preparing', timestamp: '2025-07-23T14:05:00Z' }, { status: 'Awaiting Pickup', timestamp: '2025-07-23T14:30:00Z' }, { status: 'In Transit', timestamp: '2025-07-23T15:00:00Z' }, { status: 'Completed', timestamp: '2025-07-24T10:00:00Z' }] },
+      { id: 'ORD-764', customer: 'Jane Smith', items: 2, total: 375000, status: 'Completed', date: '2025-07-24', address: '2 Sudirman St, Jakarta', phone: '081234567891', products: [{name: 'Sugar Donut', qty: 2, price: 75000}, {name: 'Pandan Cake', qty: 1, price: 225000}], courier: 'Maxim', trackingNumber: 'MX-555444333', statusHistory: [{ status: 'Needs Confirmation', timestamp: '2025-07-23T14:00:00Z' }, { status: 'Preparing', timestamp: '2025-07-23T14:05:00Z' }, { status: 'Awaiting Pickup', timestamp: '2025-07-23T14:30:00Z' }, { status: 'In Transit', timestamp: '2025-07-23T15:00:00Z' }, { status: 'Completed', timestamp: '2025-07-24T10:00:00Z' }] },
       { id: 'ORD-762', customer: 'Dewi Anggraini', items: 3, total: 675000, status: 'Cancelled', date: '2025-07-23', reason: 'Cancelled by buyer', address: '4 Thamrin St, Jakarta', phone: '081234567893', products: [{name: 'Chicken Pastel', qty: 3, price: 225000}], courier: null, trackingNumber: null, statusHistory: [{ status: 'Needs Confirmation', timestamp: '2025-07-23T09:00:00Z' }, { status: 'Cancelled', timestamp: '2025-07-23T09:05:00Z' }] },
+      { id: 'ORD-768', customer: 'Rina Wulandari', items: 1, total: 45000, status: 'Completed', date: '2025-07-21', address: 'Jl. Gatot Subroto No. 12, Jakarta', phone: '081234567888', products: [{name: 'Chicken Pastel', qty: 1, price: 45000}], courier: 'GoSend', trackingNumber: 'GK-112233445', statusHistory: [{ status: 'Needs Confirmation', timestamp: '2025-07-21T10:00:00Z' }, { status: 'Preparing', timestamp: '2025-07-21T10:05:00Z' }, { status: 'Awaiting Pickup', timestamp: '2025-07-21T10:20:00Z' }, { status: 'In Transit', timestamp: '2025-07-21T10:45:00Z' }, { status: 'Completed', timestamp: '2025-07-21T11:30:00Z' }] },
+      { id: 'ORD-769', customer: 'Ahmad Yusuf', items: 3, total: 337500, status: 'In Transit', date: '2025-07-23', address: 'Jl. Rasuna Said Kuningan, Jakarta', phone: '081234567887', products: [{name: 'Chocolate Croissant', qty: 3, price: 112500}], courier: 'GrabExpress', trackingNumber: 'GE-554433221', statusHistory: [{ status: 'Needs Confirmation', timestamp: '2025-07-23T13:00:00Z' }, { status: 'Preparing', timestamp: '2025-07-23T13:05:00Z' }, { status: 'Awaiting Pickup', timestamp: '2025-07-23T13:25:00Z' }, { status: 'In Transit', timestamp: '2025-07-23T14:00:00Z' }] },
+      { id: 'ORD-770', customer: 'Lia Kartika', items: 1, total: 375000, status: 'Preparing', date: '2025-07-24', address: 'Jl. Cikini Raya No. 7, Jakarta', phone: '081234567886', products: [{name: 'Pandan Cake', qty: 1, price: 375000}], courier: null, trackingNumber: null, statusHistory: [{ status: 'Needs Confirmation', timestamp: '2025-07-24T11:00:00Z' }, { status: 'Preparing', timestamp: '2025-07-24T11:02:00Z' }] },
+      { id: 'ORD-771', customer: 'Agus Santoso', items: 5, total: 375000, status: 'Needs Confirmation', date: '2025-07-24', address: 'Jl. Menteng No. 15, Jakarta', phone: '081234567885', products: [{name: 'Sugar Donut', qty: 5, price: 75000}], courier: null, trackingNumber: null, statusHistory: [{ status: 'Needs Confirmation', timestamp: '2025-07-24T12:30:00Z' }] },
+      { id: 'ORD-772', customer: 'Maya Sari', items: 2, total: 300000, status: 'Completed', date: '2025-07-20', address: 'Jl. Senopati No. 50, Jakarta', phone: '081234567884', products: [{name: 'Whole Wheat Bread', qty: 1, price: 150000}, {name: 'Pandan Cake', qty: 1, price: 150000}], courier: 'Maxim', trackingNumber: 'MX-987651234', statusHistory: [{ status: 'Needs Confirmation', timestamp: '2025-07-20T09:00:00Z' }, { status: 'Preparing', timestamp: '2025-07-20T09:05:00Z' }, { status: 'Awaiting Pickup', timestamp: '2025-07-20T09:20:00Z' }, { status: 'In Transit', timestamp: '2025-07-20T09:45:00Z' }, { status: 'Completed', timestamp: '2025-07-20T10:30:00Z' }] },
+      { id: 'ORD-773', customer: 'Dian Permata', items: 2, total: 90000, status: 'Cancelled', date: '2025-07-22', reason: 'Customer changed mind', address: 'Jl. Panglima Polim No. 2, Jakarta', phone: '081234567883', products: [{name: 'Chicken Pastel', qty: 2, price: 45000}], courier: null, trackingNumber: null, statusHistory: [{ status: 'Needs Confirmation', timestamp: '2025-07-22T15:00:00Z' }, { status: 'Cancelled', timestamp: '2025-07-22T15:01:00Z' }] },
+      { id: 'ORD-774', customer: 'Fajar Nugraha', items: 1, total: 112500, status: 'Awaiting Pickup', date: '2025-07-24', address: 'Jl. Kemang Raya No. 88, Jakarta', phone: '081234567882', products: [{name: 'Chocolate Croissant', qty: 1, price: 112500}], courier: 'GoSend', trackingNumber: 'GK-778899001', statusHistory: [{ status: 'Needs Confirmation', timestamp: '2025-07-24T10:10:00Z' }, { status: 'Preparing', timestamp: '2025-07-24T10:15:00Z' }, { status: 'Awaiting Pickup', timestamp: '2025-07-24T10:30:00Z' }] },
+      { id: 'ORD-775', customer: 'Indah Lestari', items: 4, total: 720000, status: 'Completed', date: '2025-07-19', address: 'Jl. Radio Dalam No. 1, Jakarta', phone: '081234567881', products: [{name: 'Whole Wheat Bread', qty: 4, price: 180000}], courier: 'GrabExpress', trackingNumber: 'GE-123123123', statusHistory: [{ status: 'Needs Confirmation', timestamp: '2025-07-19T11:00:00Z' }, { status: 'Preparing', timestamp: '2025-07-19T11:05:00Z' }, { status: 'Awaiting Pickup', timestamp: '2025-07-19T11:20:00Z' }, { status: 'In Transit', timestamp: '2025-07-19T11:45:00Z' }, { status: 'Completed', timestamp: '2025-07-19T12:30:00Z' }] },
+      { id: 'ORD-776', customer: 'Rizky Maulana', items: 2, total: 750000, status: 'Preparing', date: '2025-07-24', address: 'Jl. Barito No. 2, Jakarta', phone: '081234567880', products: [{name: 'Pandan Cake', qty: 2, price: 375000}], courier: null, trackingNumber: null, statusHistory: [{ status: 'Needs Confirmation', timestamp: '2025-07-24T13:00:00Z' }, { status: 'Preparing', timestamp: '2025-07-24T13:02:00Z' }] },
   ],
   allProducts: [
     { id: 1, name: "Chocolate Croissant", images: ['https://placehold.co/600x600/EFE3C2/123524?text=Bread%201'], price: 112500, discountPrice: null, stock: 5, sales: 15, status: 'Live', desc: 'Crispy croissant with a premium melted chocolate filling.', views: 350, conversion: 0.042 },
@@ -356,12 +365,12 @@ const HomepageView = ({ data, onAddProductClick, onAddPromotionClick }) => {
                    colors={salesAnalysisColors}
                  />
                  <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mt-4 pt-4 border-t">
-                      {salesAnalysisMetrics.map((metric, i) => (
-                          <span key={metric.key} className="flex items-center text-sm text-gray-600">
-                              <span className="w-3 h-3 rounded-full mr-2" style={{backgroundColor: salesAnalysisColors[i]}}></span>
-                              {metric.name}
-                          </span>
-                      ))}
+                        {salesAnalysisMetrics.map((metric, i) => (
+                            <span key={metric.key} className="flex items-center text-sm text-gray-600">
+                                <span className="w-3 h-3 rounded-full mr-2" style={{backgroundColor: salesAnalysisColors[i]}}></span>
+                                {metric.name}
+                            </span>
+                        ))}
                  </div>
             </div>
         </div>
@@ -370,8 +379,32 @@ const HomepageView = ({ data, onAddProductClick, onAddPromotionClick }) => {
 
 const ManageOrdersView = ({ data, onDetailClick, onUpdateStatus }) => {
     const [activeTab, setActiveTab] = useState('All');
+    const [searchQuery, setSearchQuery] = useState('');
     const tabs = ['All', 'Needs Confirmation', 'Preparing', 'Awaiting Pickup', 'In Transit', 'Completed', 'Cancelled'];
-    const filteredOrders = data.allOrders.filter(order => activeTab === 'All' || order.status === activeTab);
+    
+    const filteredOrders = useMemo(() => {
+        return data.allOrders
+            .filter(order => activeTab === 'All' || order.status === activeTab)
+            .filter(order => {
+                if (searchQuery.trim() === '') {
+                    return true; // If search is empty, show all orders in the current tab
+                }
+                const lowercasedQuery = searchQuery.toLowerCase();
+                
+                // Check if any product name in the order matches the search query
+                const productMatch = order.products.some(p => 
+                    p.name.toLowerCase().includes(lowercasedQuery)
+                );
+                
+                // Check other order fields
+                return (
+                    order.id.toLowerCase().includes(lowercasedQuery) ||
+                    order.customer.toLowerCase().includes(lowercasedQuery) ||
+                    (order.trackingNumber && order.trackingNumber.toLowerCase().includes(lowercasedQuery)) ||
+                    productMatch
+                );
+            });
+    }, [data.allOrders, activeTab, searchQuery]);
 
     const ActionButton = ({ order }) => {
         switch (order.status) {
@@ -389,10 +422,19 @@ const ManageOrdersView = ({ data, onDetailClick, onUpdateStatus }) => {
     };
 
     return (
-        <div className="p-6"><h1 className="text-2xl font-bold text-gray-800 mb-4">Management Order</h1><Card className="p-0">
+        <div className="p-6"><h1 className="text-2xl font-bold text-gray-800 mb-4">Order Management</h1><Card className="p-0">
             <div className="p-6 flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div className="flex space-x-2 overflow-x-auto pb-2">{tabs.map(tab => (<TabButton key={tab} label={`${tab} (${data.allOrders.filter(o => tab === 'All' || o.status === tab).length})`} isActive={activeTab === tab} onClick={() => setActiveTab(tab)} />))}</div>
-                <div className="relative w-full sm:w-auto"><input type="text" placeholder="Search orders..." className="w-full sm:w-64 pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#85A947] text-gray-900" /><Icon path={ICONS.search} className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" /></div>
+                <div className="relative w-full sm:w-auto">
+                    <input 
+                        type="text" 
+                        placeholder="Search by ID, Customer, Product..." 
+                        value={searchQuery}
+                        onChange={e => setSearchQuery(e.target.value)}
+                        className="w-full sm:w-64 pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#85A947] text-gray-900" 
+                    />
+                    <Icon path={ICONS.search} className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                </div>
             </div>
             <div className="overflow-x-auto"><table className="w-full text-sm text-left text-gray-500"><thead className="text-xs text-gray-700 uppercase bg-gray-50"><tr><th scope="col" className="px-6 py-3">Order ID</th><th scope="col" className="px-6 py-3">Customer</th><th scope="col" className="px-6 py-3">Shipping Info</th><th scope="col" className="px-6 py-3">Status</th><th scope="col" className="px-6 py-3">Date</th><th scope="col" className="px-6 py-3 text-center">Action</th></tr></thead>
                 <tbody>{filteredOrders.map(order => (<tr key={order.id} className="bg-white border-b hover:bg-gray-50">
@@ -412,16 +454,6 @@ const ManageOrdersView = ({ data, onDetailClick, onUpdateStatus }) => {
                     <td className="px-6 py-4">{order.date}</td>
                     <td className="px-6 py-4 text-center"><ActionButton order={order} /></td>
                 </tr>))}</tbody>
-            </table></div></Card></div>
-    );
-}
-
-const ManageCancellationsView = ({ data, onDetailClick }) => {
-    const cancelledOrders = data.allOrders.filter(order => order.status === 'Cancelled');
-    return (
-       <div className="p-6"><h1 className="text-2xl font-bold text-gray-800 mb-4">Management Cancellations</h1><Card className="p-0">
-           <div className="overflow-x-auto"><table className="w-full text-sm text-left text-gray-500"><thead className="text-xs text-gray-700 uppercase bg-gray-50"><tr><th scope="col" className="px-6 py-3">Order ID</th><th scope="col" className="px-6 py-3">Customer</th><th scope="col" className="px-6 py-3">Date Cancelled</th><th scope="col" className="px-6 py-3">Reason</th><th scope="col" className="px-6 py-3 text-center">Action</th></tr></thead>
-                <tbody>{cancelledOrders.map(order => (<tr key={order.id} className="bg-white border-b hover:bg-gray-50"><td className="px-6 py-4 font-medium text-gray-900">{order.id}</td><td className="px-6 py-4">{order.customer}</td><td className="px-6 py-4">{order.date}</td><td className="px-6 py-4">{order.reason}</td><td className="px-6 py-4 text-center"><button onClick={() => onDetailClick(order)} className="font-medium text-[#3E7B27] hover:underline transition-transform duration-150 active:scale-95">View Details</button></td></tr>))}</tbody>
             </table></div></Card></div>
     );
 }
@@ -1139,7 +1171,9 @@ const GenerateShippingModal = ({ isOpen, onClose, onConfirm, order }) => {
 
     const handleConfirm = () => {
         if (!courier) {
-            alert("Please select a courier.");
+            // In a real app, you'd show a more elegant error message.
+            // For this environment, we'll avoid window.alert().
+            console.error("Please select a courier."); 
             return;
         }
         onConfirm(order.id, courier);
@@ -1205,24 +1239,17 @@ const UpdateStatusConfirmationModal = ({ isOpen, onClose, onConfirm, order, newS
 
 
 // --- Layout Components ---
-const Sidebar = ({ activeMenu, setActiveMenu, activeSubMenu, setActiveSubMenu, hasNewOrder, setView }) => {
-    const [openSubmenu, setOpenSubmenu] = useState('Orders');
+const Sidebar = ({ activeMenu, setActiveMenu, setView }) => {
     const menuItems = [
         { id: 'Homepage', label: 'Homepage', icon: ICONS.home },
-        { id: 'Orders', label: 'Orders', icon: ICONS.orders, sub: [ { id: 'Manage Orders', label: 'OManagement Order' }, { id: 'Manage Cancellations', label: 'Management Cancellations' }, ]},
-        { id: 'Products', label: 'Products', icon: ICONS.products, sub: [ { id: 'Manage Products', label: 'Product Management' }, ]},
+        { id: 'Orders', label: 'Orders', icon: ICONS.orders },
+        { id: 'Products', label: 'Products', icon: ICONS.products },
         { id: 'Marketing', label: 'Marketing', icon: ICONS.marketing },
         { id: 'Data', label: 'Data Compass', icon: ICONS.data },
     ];
 
     const handleMenuClick = (menu) => {
-        if (menu.sub) {
-            setOpenSubmenu(openSubmenu === menu.id ? null : menu.id);
-            if (activeMenu !== menu.id) {
-                setActiveMenu(menu.id); 
-                setActiveSubMenu(menu.sub[0].id);
-            }
-        } else { setActiveMenu(menu.id); setActiveSubMenu(null); setOpenSubmenu(null); }
+        setActiveMenu(menu.id);
     };
 
     return (
@@ -1231,19 +1258,12 @@ const Sidebar = ({ activeMenu, setActiveMenu, activeSubMenu, setActiveSubMenu, h
             <nav className="flex-1 px-2 lg:px-4 py-4 space-y-1">
                 {menuItems.map(item => (
                     <div key={item.id}>
-                        <a href="#" onClick={(e) => { e.preventDefault(); handleMenuClick(item); }} className={`flex items-center justify-center lg:justify-between p-3 rounded-lg transition-colors ${activeMenu === item.id && !item.sub ? 'bg-[#85A947] text-[#123524]' : 'hover:bg-white/10'}`}>
+                        <a href="#" onClick={(e) => { e.preventDefault(); handleMenuClick(item); }} className={`flex items-center justify-center lg:justify-start p-3 rounded-lg transition-colors ${activeMenu === item.id ? 'bg-[#85A947] text-[#123524] font-bold' : 'hover:bg-white/10 text-white'}`}>
                             <div className="flex items-center relative">
                                 <Icon path={item.icon} className="h-6 w-6" />
-                                <span className="hidden lg:block ml-4 font-semibold text-white">{item.label}</span>
-                                {item.id === 'Orders' && hasNewOrder && (<span className="absolute top-0 left-4 w-3 h-3 bg-red-500 rounded-full border-2 border-[#123524]"><span className="sr-only">New Order</span></span>)}
+                                <span className="hidden lg:block ml-4 font-semibold">{item.label}</span>
                             </div>
-                            {item.sub && <Icon path={ICONS.chevronDown} className={`hidden lg:block w-5 h-5 transition-transform text-white ${openSubmenu === item.id ? 'rotate-180' : ''}`} />}
                         </a>
-                        {item.sub && openSubmenu === item.id && (
-                            <div className="hidden lg:block mt-1 ml-8 space-y-1">
-                                {item.sub.map(subItem => (<a key={subItem.id} href="#" onClick={(e) => { e.preventDefault(); setActiveMenu(item.id); setActiveSubMenu(subItem.id); }} className={`block p-2 rounded-md text-sm transition-colors ${activeSubMenu === subItem.id ? 'bg-[#85A947] text-[#123524] font-semibold' : 'text-white hover:bg-white/10'}`}>{subItem.label}</a>))}
-                            </div>
-                        )}
                     </div>
                 ))}
             </nav>
@@ -1257,7 +1277,6 @@ const Sidebar = ({ activeMenu, setActiveMenu, activeSubMenu, setActiveSubMenu, h
 
 const DashboardLayout = ({ data, setData, setView, setEditingProduct, setEditingPromotion }) => {
     const [activeMenu, setActiveMenu] = useState('Homepage');
-    const [activeSubMenu, setActiveSubMenu] = useState(null);
     const [hasNewOrder, setHasNewOrder] = useState(false);
     
     // State for modals
@@ -1340,12 +1359,10 @@ const DashboardLayout = ({ data, setData, setView, setEditingProduct, setEditing
     };
 
     const renderContent = () => {
-        const view = activeSubMenu || activeMenu;
-        switch (view) {
+        switch (activeMenu) {
             case 'Homepage': return <HomepageView data={data} onAddProductClick={() => { setEditingProduct(null); setView('addProduct'); }} onAddPromotionClick={handleAddPromotionClick} />;
-            case 'Manage Orders': return <ManageOrdersView data={data} onDetailClick={setOrderToDetail} onUpdateStatus={handleOrderStatusUpdate} />;
-            case 'Manage Cancellations': return <ManageCancellationsView data={data} onDetailClick={setOrderToDetail} />;
-            case 'Manage Products': return <ManageProductsView 
+            case 'Orders': return <ManageOrdersView data={data} onDetailClick={setOrderToDetail} onUpdateStatus={handleOrderStatusUpdate} />;
+            case 'Products': return <ManageProductsView 
                 data={data} 
                 onAddProductClick={() => { setEditingProduct(null); setView('addProduct'); }} 
                 onEditProductClick={(product) => { setEditingProduct(product); setView('editProduct'); }}
@@ -1354,13 +1371,13 @@ const DashboardLayout = ({ data, setData, setView, setEditingProduct, setEditing
             />;
             case 'Marketing': return <MarketingView data={data} onDetailClick={setPromoToDetail} onAddPromotionClick={handleAddPromotionClick} onEditPromotionClick={handleEditPromotionClick}/>;
             case 'Data': return <DataCompassView data={data} allProducts={data.allProducts} />;
-            default: return <div className="p-6 text-2xl font-bold text-gray-800">Page {view}</div>;
+            default: return <div className="p-6 text-2xl font-bold text-gray-800">Page {activeMenu}</div>;
         }
     };
 
     return (
         <div className="flex h-full w-full bg-[#f7f7f7]">
-            <Sidebar activeMenu={activeMenu} setActiveMenu={setActiveMenu} activeSubMenu={activeSubMenu} setActiveSubMenu={setActiveSubMenu} hasNewOrder={hasNewOrder} setView={setView} />
+            <Sidebar activeMenu={activeMenu} setActiveMenu={setActiveMenu} setView={setView} />
             <main className="flex-1 overflow-y-auto">{renderContent()}</main>
             
             <OrderDetailView order={orderToDetail} onClose={() => setOrderToDetail(null)} />
