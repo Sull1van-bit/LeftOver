@@ -10,6 +10,15 @@ const Navbar = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [showLoginForm, setShowLoginForm] = useState(false);
+  const [showSignUpForm, setShowSignUpForm] = useState(false);
+  const [loginData, setLoginData] = useState({ email: '', password: '' });
+  const [signUpData, setSignUpData] = useState({ 
+    firstName: '', 
+    lastName: '', 
+    email: '', 
+    password: '' 
+  });
   
   const userMenuRef = useRef(null);
 
@@ -17,6 +26,7 @@ const Navbar = ({
     const handleClickOutside = (event) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
         setIsUserMenuOpen(false);
+        resetForms();
       }
     };
 
@@ -26,22 +36,44 @@ const Navbar = ({
     };
   }, []);
 
-  const handleLogin = async () => {
-    const result = await onLogin({ email: 'demo@example.com', password: 'password' });
+  const handleLogin = async (credentials) => {
+    const result = await onLogin(credentials);
     if (result?.success) {
       setIsUserMenuOpen(false);
+      setShowLoginForm(false);
+      setLoginData({ email: '', password: '' });
     }
   };
 
-  const handleSignUp = async () => {
-    const result = await onSignUp({ 
-      name: 'New User', 
-      email: 'newuser@example.com', 
-      password: 'password' 
-    });
+  const handleSignUp = async (userData) => {
+    const result = await onSignUp(userData);
     if (result?.success) {
       setIsUserMenuOpen(false);
+      setShowSignUpForm(false);
+      setSignUpData({ firstName: '', lastName: '', email: '', password: '' });
     }
+  };
+
+  const handleLoginSubmit = (e) => {
+    e.preventDefault();
+    handleLogin(loginData);
+  };
+
+  const handleSignUpSubmit = (e) => {
+    e.preventDefault();
+    const userData = {
+      name: `${signUpData.firstName} ${signUpData.lastName}`,
+      email: signUpData.email,
+      password: signUpData.password
+    };
+    handleSignUp(userData);
+  };
+
+  const resetForms = () => {
+    setShowLoginForm(false);
+    setShowSignUpForm(false);
+    setLoginData({ email: '', password: '' });
+    setSignUpData({ firstName: '', lastName: '', email: '', password: '' });
   };
 
   const handleLogout = () => {
@@ -50,8 +82,7 @@ const Navbar = ({
   };
 
   const handleProfilePictureChange = () => {
-    const newProfilePicture = 'https://via.placeholder.com/150';
-    onUpdateUserData({ profilePicture: newProfilePicture });
+    console.log('Profile picture change clicked - implement image upload');
   };
 
   return (
@@ -81,14 +112,14 @@ const Navbar = ({
             <div className="relative" ref={userMenuRef}>
               <button
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                className="flex items-center justify-center w-10 h-10 rounded-full bg-white/20 hover:bg-white/30 transition-all duration-200 border-2 border-white/30 hover:border-white/50"
+                className={`flex items-center justify-center w-12 h-12 rounded-full bg-white/20 hover:bg-white/30 transition-all duration-200 border-2 border-white/30 hover:border-white/50 transform hover:scale-110 ${isUserMenuOpen ? 'ring-2 ring-white/50 scale-110' : ''}`}
                 aria-label="User menu"
               >
                 {isLoggedIn && userData.profilePicture ? (
                   <img 
                     src={userData.profilePicture} 
                     alt="Profile" 
-                    className="w-8 h-8 rounded-full object-cover"
+                    className="w-9 h-9 rounded-full object-cover"
                   />
                 ) : (
                   <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -98,23 +129,183 @@ const Navbar = ({
               </button>
 
               {isUserMenuOpen && (
-                <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-2xl border border-gray-100 z-50 overflow-hidden">
+                <div className="absolute right-0 mt-3 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden transform transition-all duration-300 ease-out animate-in slide-in-from-top-2 fade-in-0">
+                  <div className="absolute -top-2 right-6 w-4 h-4 bg-white border-l border-t border-gray-100 transform rotate-45"></div>
+                  
                   {!isLoggedIn ? (
-                    <div className="p-4">
-                      <div className="space-y-2">
-                        <button
-                          onClick={handleLogin}
-                          className="w-full bg-[#85A947] hover:bg-[#75993E] text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200"
-                        >
-                          Login
-                        </button>
-                        <button
-                          onClick={handleSignUp}
-                          className="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg transition-colors duration-200"
-                        >
-                          Sign Up
-                        </button>
-                      </div>
+                    <div className="p-6">
+                      {!showLoginForm && !showSignUpForm ? (
+                        <>
+                          <div className="text-center mb-4">
+                            <h3 className="text-lg font-semibold text-gray-800 mb-1">Welcome!</h3>
+                            <p className="text-sm text-gray-600">Please sign in to your account</p>
+                          </div>
+                          <div className="space-y-3">
+                            <button
+                              onClick={() => setShowLoginForm(true)}
+                              className="w-full bg-gradient-to-r from-[#85A947] to-[#9BB85C] hover:from-[#75993E] hover:to-[#8BAA4C] text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg"
+                            >
+                              <svg className="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                              </svg>
+                              Login
+                            </button>
+                            <button
+                              onClick={() => setShowSignUpForm(true)}
+                              className="w-full bg-gray-50 hover:bg-gray-100 text-gray-800 font-semibold py-3 px-4 rounded-xl transition-all duration-200 border border-gray-200 hover:border-gray-300"
+                            >
+                              <svg className="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                              </svg>
+                              Sign Up
+                            </button>
+                          </div>
+                          <div className="mt-4 pt-4 border-t border-gray-100">
+                            <p className="text-xs text-gray-500 text-center">
+                              By continuing, you agree to our Terms of Service
+                            </p>
+                          </div>
+                        </>
+                      ) : showLoginForm ? (
+                        <>
+                          <div className="text-center mb-4">
+                            <button
+                              onClick={resetForms}
+                              className="absolute left-4 top-4 p-1 hover:bg-gray-100 rounded-full transition-colors"
+                            >
+                              <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                              </svg>
+                            </button>
+                            <h3 className="text-lg font-semibold text-gray-800 mb-1">Sign In</h3>
+                            <p className="text-sm text-gray-600">Welcome back! Please enter your details</p>
+                          </div>
+                          <form onSubmit={handleLoginSubmit} className="space-y-4">
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                              <input
+                                type="email"
+                                required
+                                value={loginData.email}
+                                onChange={(e) => setLoginData({...loginData, email: e.target.value})}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85A947] focus:border-transparent"
+                                placeholder="Enter your email"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                              <input
+                                type="password"
+                                required
+                                value={loginData.password}
+                                onChange={(e) => setLoginData({...loginData, password: e.target.value})}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85A947] focus:border-transparent"
+                                placeholder="Enter your password"
+                              />
+                            </div>
+                            <div className="text-right">
+                              <a href="#" className="text-sm text-[#85A947] hover:text-[#75993E] font-medium">
+                                Forgot password?
+                              </a>
+                            </div>
+                            <button
+                              type="submit"
+                              className="w-full bg-gradient-to-r from-[#85A947] to-[#9BB85C] hover:from-[#75993E] hover:to-[#8BAA4C] text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg"
+                            >
+                              Sign In
+                            </button>
+                            <div className="text-center">
+                              <span className="text-sm text-gray-600">Don't have an account? </span>
+                              <button
+                                type="button"
+                                onClick={() => {setShowLoginForm(false); setShowSignUpForm(true);}}
+                                className="text-sm text-[#85A947] hover:text-[#75993E] font-medium"
+                              >
+                                Sign up
+                              </button>
+                            </div>
+                          </form>
+                        </>
+                      ) : (
+                        <>
+                          <div className="text-center mb-4">
+                            <button
+                              onClick={resetForms}
+                              className="absolute left-4 top-4 p-1 hover:bg-gray-100 rounded-full transition-colors"
+                            >
+                              <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                              </svg>
+                            </button>
+                            <h3 className="text-lg font-semibold text-gray-800 mb-1">Create Account</h3>
+                            <p className="text-sm text-gray-600">Join us today! Please fill in your details</p>
+                          </div>
+                          <form onSubmit={handleSignUpSubmit} className="space-y-4">
+                            <div className="grid grid-cols-2 gap-3">
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                                <input
+                                  type="text"
+                                  required
+                                  value={signUpData.firstName}
+                                  onChange={(e) => setSignUpData({...signUpData, firstName: e.target.value})}
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85A947] focus:border-transparent"
+                                  placeholder="First name"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                                <input
+                                  type="text"
+                                  required
+                                  value={signUpData.lastName}
+                                  onChange={(e) => setSignUpData({...signUpData, lastName: e.target.value})}
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85A947] focus:border-transparent"
+                                  placeholder="Last name"
+                                />
+                              </div>
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                              <input
+                                type="email"
+                                required
+                                value={signUpData.email}
+                                onChange={(e) => setSignUpData({...signUpData, email: e.target.value})}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85A947] focus:border-transparent"
+                                placeholder="Enter your email"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                              <input
+                                type="password"
+                                required
+                                value={signUpData.password}
+                                onChange={(e) => setSignUpData({...signUpData, password: e.target.value})}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85A947] focus:border-transparent"
+                                placeholder="Create a password"
+                              />
+                            </div>
+                            <button
+                              type="submit"
+                              className="w-full bg-gradient-to-r from-[#85A947] to-[#9BB85C] hover:from-[#75993E] hover:to-[#8BAA4C] text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg"
+                            >
+                              Create Account
+                            </button>
+                            <div className="text-center">
+                              <span className="text-sm text-gray-600">Already have an account? </span>
+                              <button
+                                type="button"
+                                onClick={() => {setShowSignUpForm(false); setShowLoginForm(true);}}
+                                className="text-sm text-[#85A947] hover:text-[#75993E] font-medium"
+                              >
+                                Sign in
+                              </button>
+                            </div>
+                          </form>
+                        </>
+                      )}
                     </div>
                   ) : (
                     <div>
