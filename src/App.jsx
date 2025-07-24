@@ -1,35 +1,132 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState, useEffect } from 'react';
+
+import Navbar from './components/navbar';
+import Footer from './components/footer';
+import Home from './views/home';
+import './App.css';
+
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userData, setUserData] = useState({
+    name: 'John Doe',
+    points: 1250,
+    profilePicture: null
+  });
+  const [currentView, setCurrentView] = useState('home');
+
+  useEffect(() => {
+    const checkExistingSession = () => {
+      const savedSession = localStorage.getItem('userSession');
+      if (savedSession) {
+        try {
+          const sessionData = JSON.parse(savedSession);
+          setIsLoggedIn(true);
+          setUserData(sessionData.userData);
+        } catch (error) {
+          console.error('Error parsing saved session:', error);
+          localStorage.removeItem('userSession');
+        }
+      }
+    };
+
+    checkExistingSession();
+
+    const handleHashChange = () => {
+      const hash = window.location.hash.slice(1) || 'home';
+      setCurrentView(hash);
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    handleHashChange();
+
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+    };
+  }, []);
+
+  const handleLogin = async (credentials) => {
+    try {
+      const simulatedUserData = {
+        name: 'John Doe',
+        points: 1250,
+        profilePicture: null,
+        email: 'john@example.com'
+      };
+
+      setIsLoggedIn(true);
+      setUserData(simulatedUserData);
+
+      localStorage.setItem('userSession', JSON.stringify({
+        isLoggedIn: true,
+        userData: simulatedUserData,
+        timestamp: Date.now()
+      }));
+
+      return { success: true };
+    } catch (error) {
+      console.error('Login error:', error);
+      return { success: false, error: error.message };
+    }
+  };
+
+  const handleSignUp = async (userData) => {
+    try {
+      console.log('Sign up with:', userData);
+      return { success: true };
+    } catch (error) {
+      console.error('Sign up error:', error);
+      return { success: false, error: error.message };
+    }
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setUserData({
+      name: '',
+      points: 0,
+      profilePicture: null
+    });
+    
+    localStorage.removeItem('userSession');
+  };
+
+  const updateUserData = (newData) => {
+    const updatedData = { ...userData, ...newData };
+    setUserData(updatedData);
+    
+    if (isLoggedIn) {
+      localStorage.setItem('userSession', JSON.stringify({
+        isLoggedIn: true,
+        userData: updatedData,
+        timestamp: Date.now()
+      }));
+    }
+  };
+
+  const renderCurrentView = () => {
+    switch (currentView) {
+      
+      case 'home':
+      default:
+        return <Home />;
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="min-h-screen bg-[#EFE3C2]">
+      <Navbar 
+        isLoggedIn={isLoggedIn}
+        userData={userData}
+        onLogin={handleLogin}
+        onSignUp={handleSignUp}
+        onLogout={handleLogout}
+        onUpdateUserData={updateUserData}
+      />
+      {renderCurrentView()}
+      <Footer />
+    </div>
+  );
 }
 
-export default App
+export default App;
