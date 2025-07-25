@@ -2198,3 +2198,109 @@ export default function App() {
         </div>
     );
 }
+
+// Export a simplified Dashboard component for integration
+export const DashboardOnly = () => {
+    const [data, setData] = useState(initialMockData);
+    const [editingProduct, setEditingProduct] = useState(null);
+    const [editingPromotion, setEditingPromotion] = useState(null);
+    const [view, setView] = useState('dashboard');
+
+    // Same useEffect for promotion timer
+    useEffect(() => {
+        const promotionTimer = setInterval(() => {
+            setData(currentData => {
+                const now = new Date();
+                let hasChanges = false;
+
+                const updatedPromotions = JSON.parse(JSON.stringify(currentData.promotions));
+                let updatedProducts = JSON.parse(JSON.stringify(currentData.allProducts));
+
+                updatedPromotions.forEach(promo => {
+                    const startDate = new Date(promo.startDate);
+                    const endDate = new Date(promo.endDate);
+
+                    if (promo.status === 'Upcoming' && now >= startDate && now <= endDate) {
+                        promo.status = 'Ongoing';
+                        hasChanges = true;
+                        
+                        promo.discountedProducts.forEach(dp => {
+                            const productIndex = updatedProducts.findIndex(p => p.id === dp.productId);
+                            if (productIndex !== -1 && dp.discountPercentage > 0) {
+                                const product = updatedProducts[productIndex];
+                                const discountedPrice = Math.round(product.price * (1 - dp.discountPercentage / 100));
+                                product.discountPrice = discountedPrice;
+                            }
+                        });
+                    }
+
+                    if (promo.status === 'Ongoing' && now > endDate) {
+                        promo.status = 'Finished';
+                        hasChanges = true;
+
+                        promo.discountedProducts.forEach(dp => {
+                            const productIndex = updatedProducts.findIndex(p => p.id === dp.productId);
+                            if (productIndex !== -1) {
+                                updatedProducts[productIndex].discountPrice = null;
+                            }
+                        });
+                    }
+                });
+
+                if (hasChanges) {
+                    return { ...currentData, promotions: updatedPromotions, allProducts: updatedProducts };
+                }
+
+                return currentData;
+            });
+        }, 1000);
+
+        return () => clearInterval(promotionTimer);
+    }, [setData]);
+
+    const handleSaveProduct = (productToSave) => {
+        setData(prevData => {
+            const products = [...prevData.allProducts];
+            const index = products.findIndex(p => p.id === productToSave.id);
+            if (index > -1) {
+                products[index] = productToSave;
+            } else {
+                products.unshift(productToSave);
+            }
+            return { ...prevData, allProducts: products };
+        });
+        setView('dashboard');
+    };
+
+    const handleSavePromotion = (promoToSave) => {
+        setData(prevData => {
+            const promotions = [...prevData.promotions];
+            const index = promotions.findIndex(p => p.id === promoToSave.id);
+            if (index > -1) {
+                promotions[index] = promoToSave;
+            } else {
+                promotions.unshift(promoToSave);
+            }
+            return { ...prevData, promotions: promotions };
+        });
+        setView('dashboard');
+    };
+
+    const renderCurrentView = () => {
+        switch (view) {
+            case 'dashboard': return <DashboardLayout data={data} setData={setData} setView={setView} setEditingProduct={setEditingProduct} setEditingPromotion={setEditingPromotion} />;
+            case 'addProduct': return <AddEditProductPage product={null} onSave={handleSaveProduct} onCancel={() => setView('dashboard')} />;
+            case 'editProduct': return <AddEditProductPage product={editingProduct} onSave={handleSaveProduct} onCancel={() => setView('dashboard')} />;
+            case 'addPromotion': return <AddEditPromotionPage promo={null} allProducts={data.allProducts} onSave={handleSavePromotion} onCancel={() => setView('dashboard')} />;
+            case 'editPromotion': return <AddEditPromotionPage promo={editingPromotion} allProducts={data.allProducts} onSave={handleSavePromotion} onCancel={() => setView('dashboard')} />;
+            default: return <DashboardLayout data={data} setData={setData} setView={setView} setEditingProduct={setEditingProduct} setEditingPromotion={setEditingPromotion} />;
+        }
+    };
+
+    return (
+        <div className="h-screen w-full overflow-hidden bg-[#f7f7f7]">
+            <style>{`@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap'); body { font-family: 'Inter', sans-serif; }`}</style>
+            {renderCurrentView()}
+        </div>
+    );
+};
