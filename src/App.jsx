@@ -6,6 +6,7 @@ import Home from './views/home';
 import { supabase } from './supabaseClient';
 import Catalog from './views/catalog';
 import About from './views/about';
+import { DashboardOnly } from './views/dashboard';
 import RecipeRecommendation from './components/RecipeRecommendation';
 import KatalogManagerPage from './views/katalogManager';
 import './App.css';
@@ -23,7 +24,7 @@ function App() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
-  
+
 
   const [showNotification, setShowNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState("");
@@ -36,7 +37,7 @@ function App() {
     setShowNotification(true);
     setTimeout(() => {
       setShowNotification(false);
-    }, 2000); 
+    }, 2000);
   };
 
   useEffect(() => {
@@ -64,8 +65,8 @@ function App() {
           profilePicture: null,
           email: session.user.email
         });
-        
-      
+
+
         if (event === 'SIGNED_IN') {
           setTimeout(() => {
             showNotificationPopup(`Welcome back, ${session.user.user_metadata?.display_name || 'User'}!`, "success");
@@ -78,7 +79,7 @@ function App() {
           points: 0,
           profilePicture: null
         });
-        
+
         // Show logout notification
         if (event === 'SIGNED_OUT') {
           setTimeout(() => {
@@ -177,6 +178,8 @@ function App() {
         return <RecipeRecommendation />;
       case 'katalog-manager':
         return <KatalogManagerPage isLoggedIn={isLoggedIn} />;
+      case 'dashboard':
+        return <DashboardOnly />;
       case 'home':
       default:
         return <Home />;
@@ -185,26 +188,28 @@ function App() {
 
   return (
     <div className="min-h-screen bg-[#EFE3C2]">
-      <Navbar 
-        isLoggedIn={isLoggedIn}
-        userData={userData}
-        onLogin={handleLogin}
-        onSignUp={handleSignUp}
-        onLogout={handleLogout}
-        onUpdateUserData={updateUserData}
-      />
+      {currentView !== 'dashboard' && (
+        <Navbar
+          isLoggedIn={isLoggedIn}
+          userData={userData}
+          onLogin={handleLogin}
+          onSignUp={handleSignUp}
+          onLogout={handleLogout}
+          onUpdateUserData={updateUserData}
+        />
+      )}
       {renderCurrentView()}
-      <Footer />
-      
-    
+      {currentView !== 'dashboard' && <Footer />}
+
+
       {showNotification && (
         <div className={`fixed bottom-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg transition-all duration-500 ease-out ${
           showNotification ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
-        } ${
+          } ${
           notificationType === 'success' ? 'bg-green-500 text-white' :
-          notificationType === 'error' ? 'bg-red-500 text-white' :
-          'bg-blue-500 text-white'
-        }`}>
+            notificationType === 'error' ? 'bg-red-500 text-white' :
+              'bg-blue-500 text-white'
+          }`}>
           <div className="flex items-center justify-center">
             <span className="font-medium">{notificationMessage}</span>
           </div>
@@ -212,8 +217,6 @@ function App() {
       )}
     </div>
   );
-
-
 }
 
 export default App;

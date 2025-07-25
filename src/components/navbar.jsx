@@ -341,7 +341,7 @@ const Navbar = ({
                         </button>
 
                         <button 
-                          onClick={() => window.open('/src/views/dashboard/index.jsx', '_blank')}
+                          onClick={() => window.location.hash = 'dashboard'}
                           className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-50 flex items-center space-x-3 transition-colors duration-150"
                         >
                           <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
