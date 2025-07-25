@@ -38,7 +38,7 @@ const Home = () => {
       </div>
 
       <section className="mb-12">
-        <h2 className="text-2xl font-bold mb-6 text-[#123524]">Explore<span className="text-[#3E7B27] px-2 rounded-md">LeftOver</span></h2>
+        <h2 className="text-2xl font-bold mb-6 text-[#123524]">Explore<span className="px-2 rounded-md"><img src="/images/Logo.png" alt="LeftOver" className="inline-block h-12 w-auto" /></span></h2>
         <div className="bg-white rounded-lg shadow-sm p-6">
           <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-6 gap-4">
             {categories.map((category) => (
@@ -65,7 +65,7 @@ const Home = () => {
 
       <section className="mb-12">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-[#123524]">Today's Available <span className="text-[#3E7B27] font-extrabold">LeftOver</span></h2>
+          <h2 className="text-2xl font-bold text-[#123524]">Today's Available <span className="font-extrabold"><img src="/images/Logo.png" alt="LeftOver" className="inline-block h-12 w-auto" /></span></h2>
           <a href="#" className="text-[#3E7B27] hover:underline">View all</a>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -104,7 +104,7 @@ const Home = () => {
             className="w-full h-48 object-cover"
           />
           <div className="absolute inset-0 flex flex-col justify-center items-center bg-[#123524] bg-opacity-70 text-white text-center">
-            <h2 className="text-3xl font-bold mb-2">Join Our <span className="text-[#85A947]">LeftOver</span> Program</h2>
+            <h2 className="text-3xl font-bold mb-2">Join Our <span><img src="/images/Logo.png" alt="LeftOver" className="inline-block h-10 w-auto" /></span> Program</h2>
             <p className="text-xl mb-4">Over 300 businesses in Jakarta already saving costs</p>
             <button className="bg-[#3E7B27] text-white px-6 py-2 rounded-md font-semibold hover:bg-[#123524] hover:text-white transition cursor-pointer">
               Sign Up Now
@@ -115,7 +115,7 @@ const Home = () => {
 
       <section className="mb-12">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-[#123524]">Just Added - Fresh <span className="text-[#3E7B27] font-extrabold">LeftOver</span></h2>
+          <h2 className="text-2xl font-bold text-[#123524]">Just Added - Fresh <span className="font-extrabold"><img src="/images/Logo.png" alt="LeftOver" className="inline-block h-12 w-auto" /></span></h2>
           <a href="#" className="text-[#3E7B27] hover:underline">View all</a>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
