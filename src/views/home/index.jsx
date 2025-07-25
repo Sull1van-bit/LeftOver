@@ -4,10 +4,10 @@ import KatalogManager from '../../components/KatalogManager';
 
 const Home = () => {
   const featuredProducts = [
-    { id: 1, name: 'Warung Surplus', price: 275000, image: '../../../public/images/warung.png', description: 'Assorted leftover dishes from local warungs in Jakarta. Perfect for catering small events.' },
-    { id: 2, name: 'Roti Bundle', price: 125000, image: '../../../public/images/Bread.jpg', description: 'Day-old pastries, bread and kue from top bakeries in Bandung. Great for coffee shops.' },
-    { id: 3, name: 'Pasar Fresh Box', price: 200000, image: '../../../public/images/basket-full-vegetables.jpg', description: 'Assorted vegetables and fruits from Pasar Baru that are still fresh but didn\'t meet retail standards.' },
-    { id: 4, name: 'Dairy Products', price: 175000, image: '../../../public/images/Cheese.png', description: 'Collection of near-expiry dairy products from Indonesian suppliers including milk, cheese, and yogurt.' },
+    { id: 1, name: 'Warung Surplus', price: 275000, image: '/images/warung.png', description: 'Assorted leftover dishes from local warungs in Jakarta. Perfect for catering small events.' },
+    { id: 2, name: 'Roti Bundle', price: 125000, image: '/images/Bread.jpg', description: 'Day-old pastries, bread and kue from top bakeries in Bandung. Great for coffee shops.' },
+    { id: 3, name: 'Pasar Fresh Box', price: 200000, image: '/images/basket-full-vegetables.jpg', description: 'Assorted vegetables and fruits from Pasar Baru that are still fresh but didn\'t meet retail standards.' },
+    { id: 4, name: 'Dairy Products', price: 175000, image: '/images/Cheese.png', description: 'Collection of near-expiry dairy products from Indonesian suppliers including milk, cheese, and yogurt.' },
   ];
 
   const categories = [
