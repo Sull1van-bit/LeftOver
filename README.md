@@ -1,145 +1,22 @@
-# GarudaHacks 2025 - LeftOver
+## Inspiration
+Our inspiration for creating LeftOver came from Surplus, a movement that encourages people not to waste leftover food carelessly. We realized that many people around us still throw away food that could actually can be repurposed or processed into something more enjoyable. Through LeftOver, we want to help reduce food waste pollution by promoting better food management.
+## What it does
+The LeftOver app serves as a platform for users, such as people at home who are unsure what to do with leftover food or are looking for affordable meals that still have nearly the same quality as fresh food. LeftOver is also integrated with AI, which helps users find suitable recipes. For restaurant owners, the app provides a way to sell their surplus food, and it also helps calculate deadstock to avoid overproduction in the future.
+## How we built it
+As a team we have different role like Front end and back end, we used like :
+1.	React : for making responsive and interactive website so user was satisfied with our web.
+2.	Vite : for optimized the website.
+3.	TailWinds CSS : for Customize our website way more effective and way more unique.
+4.	SupaBase: for a realtime database
+5.	Gemini AI : Gemini AI supports the AI functionalities within the application
+## Challenges we ran into
+We faced many challenges during development. On the backend side, we struggled with the programming language, which pushed us to learn and adapt quickly. We also realized how important time management is, especially when working under deadlines. Additionally, we learned the value of communication, as at first we worked more like individuals. However, as time went on, our teamwork improved significantly.
 
-A web-based application that helps users and restaurant owners use food wisely and effectively.
+## Accomplishments that we're proud of
+One of the accomplishments we’re most proud of as a team is being able to bring our ideas to life by building an app that matched our imagination, complete with a UI/UX design that we genuinely love. We're also proud that we successfully integrated AI into our project for the first time.
 
-## Key Features
+## What we learned
+During GarudaHack, we learned the importance of teamwork and good communication. Despite the challenges, we truly enjoyed the experience—especially being able to laugh and grow together. We also learned how to write code more effectively, the value of choosing simpler languages or tools, and not being afraid to ask mentors for help, which really made a difference. Most importantly, we learned how to build an application with the right workflow, which helped us stay organized and avoid unnecessary stress.
 
-- **Ecommerce**: A marketplace within the app
-- **AI Recipe Recommendations**: Get recipe suggestions based on the ingredients you have on hand
-- **Text Input**: Enter ingredients manually
-- **Camera Input**: Photograph ingredients for automatic analysis
-- **Modern UI**: Responsive and user-friendly interface
-- **Login System**: User authentication with profiles
-- **Mobile Responsive**: Optimized for all devices
-  
-
-##  Technology we use
-
-- **Frontend**: React 18, Vite
-- **Styling**: Tailwind CSS
-- **AI**: Google Gemini 2.0 Flash API
-- **Camera**: WebRTC MediaDevices API
-- **Icons**: Heroicons
-
-##  Prerequisites
-
-- Node.js (v16 or new version)
-- npm or yarn
-- Google AI Studio account for Gemini API key
-
-## 🛠️ Setup dan Instalasi
-
-1. **Clone repository**
-   ```bash
-   git clone <repository-url>
-   cd GarudaHacks2025
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Setup Environment Variables**
-   ```bash
-   cp .env.example .env
-   ```
-   
-   Edit file `.env` and add your API key :
-   ```env
-   VITE_GEMINI_API_KEY=your_actual_gemini_api_key_here
-   ```
-   
-4. **Get Gemini API Key**
-- Visit Google AI Studio (https://aistudio.google.com/)
-- Create an account or log in
-- Generate a new API key
-- Copy the API key to the `.env` file
-
-5. **Run the application**
-```bash
-npm run dev
-```
-
-6. **Open browser**
-The application will run at `http://localhost:5173`
-## How to Use
-
-### Recipe Recommendations with Text Input
-1. Navigate to the "Recipe AI" page
-2. Enter the available ingredients in the text area (separate them with commas)
-3. Click "Search Recipes"
-4. The AI will provide recipe recommendations based on those ingredients.
-
-### Recipe Recommendations with Camera
-1. Navigate to the "Recipe AI" page
-2. Click "Open Camera"
-3. Point the camera at the ingredients.
-4. Click "Take Photo"
-5. Click "Analyze Image"
-6. The AI will identify the ingredients and provide recipe recommendations.
-
-## Project Structure
-
-```
-src/
-├── components/
-│   ├── navbar.jsx              # Navigation bar 
-│   ├── footer.jsx              # Footer component
-│   └── RecipeRecommendation.jsx #  AI recipe
-├── views/
-│   ├── home/
-│   │   └── index.jsx           # Home Page
-│   └── catalog/
-│       └── index.jsx           # Catalog Page
-├── assets/
-└── App.jsx                     # Main app component
-```
-
-##  API Configuration
-
-The application uses the Google Gemini 2.0 Flash API with the endpoint:
-
-
-https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent
-
-
-The request format includes:
-- Text input for ingredients
-- Image input (base64) for photo analysis
-- Structured JSON response with formatted recipe
-
-## Features Detail
-
-### Input Methods
-- **Text Input**: Textarea for manual input of ingredients
-- **Camera Input**: WebRTC camera access for real-time photos
-- **Image Analysis**: AI vision for ingredient identification from photos
-
-### Recipe Display
-- Recipe name and description
-- List of ingredients with bullet points
-- Numbered cooking steps
-- Difficulty level, cooking time, and servings
-- Responsive card layout
-
-### User Experience
-- Loading states with spinner
-- Error handling and informative messages
-- Responsive design for mobile and Desktop
-- Smooth transitions and animations
-
-## Support
-
-If you encounter any issues or have questions, please create an issue in this repository.
-
-
-## Our team
-**cuman bisa html :**
-1. Victor Chandra
-2. Rafael Romelo Gibran
-3. Hansen Japri
-4. Naufal Rabbani
----
-
-**GarudaHacks 2025** - Transforming Food Waste into Delicious Possibilities!
+## What's next for LeftOver
+Moving forward, we definitely want to keep developing LeftOver. We plan to make the app more real-time, improve its user-friendliness, and fix the remaining bugs. In the long term, our goal is to make LeftOver widely used and become a movement that encourages people to reduce food waste and take better care of the environment.
