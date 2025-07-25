@@ -7,6 +7,7 @@ import { supabase } from './supabaseClient';
 import Catalog from './views/catalog';
 import About from './views/about';
 import RecipeRecommendation from './components/RecipeRecommendation';
+import KatalogManagerPage from './views/katalogManager';
 import './App.css';
 
 
@@ -174,6 +175,8 @@ function App() {
         return <About />;
       case 'recipe':
         return <RecipeRecommendation />;
+      case 'katalog-manager':
+        return <KatalogManagerPage isLoggedIn={isLoggedIn} />;
       case 'home':
       default:
         return <Home />;

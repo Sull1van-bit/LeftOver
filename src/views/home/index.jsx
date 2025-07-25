@@ -145,16 +145,6 @@ const Home = () => {
           ))}
         </div>
       </section>
-      {/* Button to toggle KatalogManager */}
-      <div className="flex justify-center my-8">
-        <button
-          className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
-          onClick={() => setShowKatalog(prev => !prev)}
-        >
-          {showKatalog ? 'Hide' : 'Show'} Katalog Manager
-        </button>
-      </div>
-      {showKatalog && <KatalogManager />}
     </div>
   );
 };
