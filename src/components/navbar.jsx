@@ -101,13 +101,10 @@ const Navbar = ({
               Catalog
             </a>
             <a href="#recipe" className="text-white hover:bg-white/15 px-4 py-2 rounded-lg transition-all duration-200 font-medium">
-              Recipe AI
+              Recipe Finder
             </a>
             <a href="#about" className="text-white hover:bg-white/15 px-4 py-2 rounded-lg transition-all duration-200 font-medium">
               About
-            </a>
-            <a href="#contact" className="text-white hover:bg-white/15 px-4 py-2 rounded-lg transition-all duration-200 font-medium">
-              Contact
             </a>
           </div>
 
