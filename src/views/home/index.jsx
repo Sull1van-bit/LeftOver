@@ -1,5 +1,6 @@
 
-import React from 'react';
+import React, { useState } from 'react';
+import KatalogManager from '../../components/KatalogManager';
 
 const Home = () => {
   const featuredProducts = [
@@ -14,6 +15,8 @@ const Home = () => {
     { id: 2, name: 'Our Top Picks', image: '' },
     { id: 3, name: 'Just Rescued!', image: 'https://placehold.co/400x200/3E7B27/EFE3C2?text=Pasar+Grocers' },
   ];
+
+  const [showKatalog, setShowKatalog] = useState(false);
 
   return (
     <div className="container mx-auto px-4 py-8">

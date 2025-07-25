@@ -1,0 +1,103 @@
+import React, { useState, useEffect } from 'react' 
+import { supabase } from './supabaseClient';
+
+
+
+function SistemCrud() {
+  const [newTask, SetNewTask] = useState({title: "", description: ""});
+  const [tasks, SetTasks] = useState([])
+  const [newDescription, SetNewDescription] = useState("");
+
+  const fetchTasks = async (e) =>{
+     const {error, data} = await supabase.from("tasks").select("*").order("id",{ascending: true});
+
+     if(error){
+      console.error("error pas baca", error.message)
+      return;
+     }
+     SetTasks(data)
+  }
+
+    const DeleteTask = async (id) =>{
+
+   const {error} = await supabase.from("tasks").delete().eq("id",id)
+  
+  if(error){
+    console.error("gagal delete", error.message);
+  }
+  }
+
+  const updateTask = async (id) =>{
+
+   const {error} = await supabase.from("tasks").update({description:newDescription}).eq("id",id)
+  
+  if(error){
+    console.error("gagal delete", error.message);
+  }
+  }
+
+
+  useEffect(()=>{
+    fetchTasks();
+
+  },[])
+
+
+
+  
+  const handleSubmit = async (e) =>{
+    e.preventDefault()
+
+   const {error} = await supabase.from("tasks").insert(newTask).single()
+  
+  if(error){
+    console.error("error cuy", error.message);
+  }
+  SetNewTask({title: "", description: ""})
+  }
+
+  useEffect(()=>{
+    fetchTasks();
+
+  },[])
+  console.log(tasks)
+  return (
+    <>
+    <h1>Task manager CRUD</h1>
+
+    <form onSubmit={handleSubmit}>
+      <input type="text"
+            placeholder='input' 
+            style={{width:"100%", marginBottom: "0.5rem",padding: "5px"}}
+            onChange={(e)=>SetNewTask((prev)=>({...prev,title: e.target.value}))}
+                         />
+      <textarea placeholder='Task Description'
+                style={{width:"100%", marginBottom: "0.5rem",padding: "5px"}}
+                onChange={(e)=>SetNewTask((prev)=>({...prev,description: e.target.value}))}
+                ></textarea>
+      <button type='submit' style={{padding: "2px"}}>submit</button>
+    </form>
+
+    <ul>
+      {tasks.map((task,key) =>(
+
+         <li
+          key={key}
+          >
+          <div className="">
+            <h3>{task.title}</h3>
+            <h3>{task.description}</h3>
+            <textarea onChange={(e)=> SetNewDescription(e.target.value)}></textarea>
+            <button
+                onClick={()=> updateTask(task.id)}>edit</button>
+            <button onClick={()=>{DeleteTask(task.id)}}>delete</button>
+          </div>
+         </li>
+
+      ))}
+     
+    </ul>
+    </>
+  )
+}
+export default SistemCrud
