@@ -259,245 +259,312 @@ const RecipeRecommendation = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-lg">
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-gray-800 mb-2">
-            AI Recipe Recommendations
-        </h2>
-        <p className="text-gray-600" style={{fontFamily: 'Helvetica, Arial, sans-serif'}}>
-          Get recipe suggestions based on your available ingredients
-        </p>
-      </div>
-
-      <div className="grid md:grid-cols-2 gap-6 mb-8">
-        <div className="bg-gray-50 p-6 rounded-lg">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-            <svg className="w-6 h-6 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+    <div className="min-h-screen py-8 px-4">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-[#3E7B27] rounded-full mb-6">
+            <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
             </svg>
-            Text Input
-          </h3>
-          <form onSubmit={handleTextSubmit}>
-            <textarea
-              value={ingredients}
-              onChange={(e) => setIngredients(e.target.value)}
-              placeholder="Enter available ingredients, separated by commas&#10;Example: chicken, onion, tomato, rice"
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
-              rows="4"
-            />
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full mt-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200"
-            >
-              {loading ? 'Finding Recipes...' : 'Find Recipes'}
-            </button>
-          </form>
+          </div>
+          <h1 className="text-5xl font-extrabold text-[#3E7B27] mb-4">
+            AI Recipe Finder
+          </h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            Transform your ingredients into delicious recipes with the power of AI
+          </p>
         </div>
 
-        <div className="bg-gray-50 p-6 rounded-lg">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-            <svg className="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0118.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            Camera Input
-          </h3>
-          
-          {!showCamera && !capturedImage && (
-            <div className="text-center">
-              <div className="w-32 h-32 mx-auto mb-4 bg-gray-200 rounded-lg flex items-center justify-center">
-                <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="grid lg:grid-cols-2 gap-8 mb-12">
+          <div className="bg-white/20 backdrop-blur-md p-8 rounded-2xl shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300">
+            <div className="flex items-center mb-6">
+              <div className="w-12 h-12 bg-[#3E7B27] rounded-xl flex items-center justify-center mr-4">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-800">
+                Text Input
+              </h3>
+            </div>
+            <form onSubmit={handleTextSubmit}>
+              <div className="relative">
+                <textarea
+                  value={ingredients}
+                  onChange={(e) => setIngredients(e.target.value)}
+                  placeholder="Enter your available ingredients...&#10;Example: chicken, onion, tomato, rice, garlic"
+                  className="w-full p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-[#3E7B27] focus:ring-4 focus:ring-[#85A947]/20 resize-none transition-all duration-200 text-gray-700 placeholder-gray-400"
+                  rows="5"
+                />
+                <div className="absolute bottom-3 right-3 text-xs text-gray-400">
+                  {ingredients.length}/500
+                </div>
+              </div>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full mt-6 bg-[#3E7B27] hover:bg-[#2d5a1d] disabled:bg-gray-400 text-white font-bold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-[1.02] hover:shadow-lg disabled:hover:scale-100"
+              >
+                {loading ? (
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
+                    Finding Recipes...
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center">
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    Find Recipes
+                  </div>
+                )}
+              </button>
+            </form>
+          </div>
+
+          <div className="bg-white/20 backdrop-blur-md p-8 rounded-2xl shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300">
+            <div className="flex items-center mb-6">
+              <div className="w-12 h-12 bg-[#3E7B27] rounded-xl flex items-center justify-center mr-4">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0118.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
               </div>
-              <p className="text-gray-600 text-sm mb-4" style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}>
-                Take a photo of your ingredients for AI analysis
-              </p>
-              <button
-                onClick={startCamera}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center"
-              >
-                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                </svg>
-                Open Camera
-              </button>
+              <h3 className="text-2xl font-bold text-gray-800">
+                Camera Input
+              </h3>
             </div>
-          )}
-
-          {showCamera && (
-            <div className="space-y-4">
-              <div className="relative bg-black rounded-lg overflow-hidden">
-                <video
-                  ref={videoRef}
-                  autoPlay
-                  playsInline
-                  muted
-                  className="w-full h-64 object-cover"
-                  onLoadedMetadata={() => {}}
-                  onError={(e) => {
-                    setError('Failed to load camera video.');
-                  }}
-                />
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <div className="w-48 h-48 border-2 border-white border-dashed rounded-lg flex items-center justify-center">
-                    <span className="text-white text-sm">Point at food ingredients</span>
-                  </div>
+            
+            {!showCamera && !capturedImage && (
+              <div className="text-center py-8">
+                <div className="w-40 h-40 mx-auto mb-6 bg-[#85A947]/20 rounded-2xl flex items-center justify-center shadow-inner">
+                  <svg className="w-16 h-16 text-[#3E7B27]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0118.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
                 </div>
-              </div>
-              <div className="flex space-x-2">
+                <p className="text-gray-600 text-lg mb-6 leading-relaxed">
+                  Snap a photo of your ingredients<br />for instant AI analysis
+                </p>
                 <button
-                  onClick={captureImage}
-                  className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center"
+                  onClick={startCamera}
+                  className="w-full bg-[#3E7B27] hover:bg-[#2d5a1d] text-white font-bold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-[1.02] hover:shadow-lg flex items-center justify-center"
                 >
                   <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0118.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                   </svg>
-                  Capture Photo
-                </button>
-                <button
-                  onClick={stopCamera}
-                  className="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200"
-                >
-                  Cancel
+                  Open Camera
                 </button>
               </div>
-            </div>
-          )}
+            )}
 
-          {capturedImage && (
-            <div className="space-y-4">
-              <div className="relative">
-                <img
-                  src={URL.createObjectURL(capturedImage)}
-                  alt="Captured ingredients"
-                  className="w-full h-64 object-cover rounded-lg"
-                />
-                <div className="absolute top-2 right-2 bg-green-600 text-white px-2 py-1 rounded-full text-xs font-medium">
-                  ✓ Photo Captured
+            {showCamera && (
+              <div className="space-y-6">
+                <div className="relative bg-gray-900 rounded-2xl overflow-hidden shadow-2xl">
+                  <video
+                    ref={videoRef}
+                    autoPlay
+                    playsInline
+                    muted
+                    className="w-full h-80 object-cover"
+                    onLoadedMetadata={() => {}}
+                    onError={(e) => {
+                      setError('Failed to load camera video.');
+                    }}
+                  />
+                </div>
+                <div className="flex space-x-3">
+                  <button
+                    onClick={captureImage}
+                    className="flex-1 bg-[#3E7B27] hover:bg-[#2d5a1d] text-white font-bold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-[1.02] hover:shadow-lg flex items-center justify-center"
+                  >
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0118.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    Capture Photo
+                  </button>
+                  <button
+                    onClick={stopCamera}
+                    className="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-bold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-[1.02]"
+                  >
+                    Cancel
+                  </button>
                 </div>
               </div>
-              <div className="flex space-x-2">
-                <button
-                  onClick={handleImageAnalysis}
-                  disabled={loading}
-                  className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center"
-                >
-                  {loading ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Analyzing...
-                    </>
-                  ) : (
-                    <>
-                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                      </svg>
-                      Analyze Image
-                    </>
-                  )}
-                </button>
-                <button
-                  onClick={() => setCapturedImage(null)}
-                  disabled={loading}
-                  className="flex-1 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-400 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200"
-                >
-                  Retake
-                </button>
+            )}
+
+            {capturedImage && (
+              <div className="space-y-6">
+                <div className="relative group">
+                  <img
+                    src={URL.createObjectURL(capturedImage)}
+                    alt="Captured ingredients"
+                    className="w-full h-80 object-cover rounded-2xl shadow-2xl"
+                  />
+                  <div className="absolute inset-0 bg-black/30 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="absolute top-4 right-4 bg-[#3E7B27] text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg">
+                    <svg className="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    Photo Captured
+                  </div>
+                </div>
+                <div className="flex space-x-3">
+                  <button
+                    onClick={handleImageAnalysis}
+                    disabled={loading}
+                    className="flex-1 bg-[#3E7B27] hover:bg-[#2d5a1d] disabled:bg-gray-400 text-white font-bold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-[1.02] hover:shadow-lg disabled:hover:scale-100 flex items-center justify-center"
+                  >
+                    {loading ? (
+                      <>
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
+                        Analyzing...
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                        </svg>
+                        Analyze Image
+                      </>
+                    )}
+                  </button>
+                  <button
+                    onClick={() => setCapturedImage(null)}
+                    disabled={loading}
+                    className="flex-1 bg-gray-500 hover:bg-gray-600 disabled:bg-gray-400 text-white font-bold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-[1.02] disabled:hover:scale-100"
+                  >
+                    Retake
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {error && (
+          <div className="mb-8 p-6 bg-red-50 border-l-4 border-red-400 rounded-xl shadow-lg">
+            <div className="flex items-center">
+              <svg className="w-6 h-6 text-red-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p className="text-red-700 font-medium">{error}</p>
+            </div>
+          </div>
+        )}
+
+        {loading && (
+          <div className="text-center py-16">
+            <div className="relative inline-block">
+              <div className="w-20 h-20 border-4 border-[#85A947]/30 border-t-[#3E7B27] rounded-full animate-spin"></div>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <svg className="w-8 h-8 text-[#3E7B27]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
               </div>
             </div>
-          )}
-        </div>
+            <h3 className="mt-6 text-xl font-bold text-gray-800">Cooking up something special...</h3>
+            <p className="mt-2 text-gray-600">Our AI chef is analyzing your ingredients</p>
+          </div>
+        )}
+
+        {recipes.length > 0 && (
+          <div className="space-y-8">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-6 bg-white/20 backdrop-blur-md rounded-2xl shadow-xl border border-white/30">
+              <div>
+                <h2 className="text-3xl font-bold text-[#3E7B27]">
+                  Your Recipe Collection
+                </h2>
+                <p className="text-gray-600 mt-1">
+                  {recipes.length} delicious recipe{recipes.length > 1 ? 's' : ''} crafted just for you
+                </p>
+              </div>
+              <button
+                onClick={clearResults}
+                className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-xl font-bold transition-all duration-200 transform hover:scale-105 flex items-center"
+              >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                Clear All
+              </button>
+            </div>
+
+            <div className="grid gap-8">
+              {recipes.map((recipe, index) => (
+                <div key={index} className="bg-white/15 backdrop-blur-md border border-white/25 rounded-2xl p-8 shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:-translate-y-1">
+                  <div className="flex flex-col lg:flex-row justify-between items-start gap-4 mb-6">
+                    <div className="flex-1">
+                      <h3 className="text-2xl font-bold text-gray-800 mb-2">{recipe.name}</h3>
+                      <p className="text-gray-600 text-lg leading-relaxed">{recipe.description}</p>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <span className={`px-4 py-2 rounded-full text-sm font-bold shadow-lg ${
+                        recipe.difficulty === 'easy' ? 'bg-[#3E7B27] text-white' :
+                        recipe.difficulty === 'medium' ? 'bg-yellow-500 text-white' :
+                        'bg-red-500 text-white'
+                      }`}>
+                        {recipe.difficulty?.toUpperCase()}
+                      </span>
+                      <span className="px-4 py-2 bg-[#3E7B27] text-white rounded-full text-sm font-bold shadow-lg">
+                        {recipe.cookingTime}
+                      </span>
+                      <span className="px-4 py-2 bg-[#85A947] text-white rounded-full text-sm font-bold shadow-lg">
+                        {recipe.servings} servings
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="grid lg:grid-cols-2 gap-8">
+                    <div className="bg-[#85A947]/20 backdrop-blur-sm p-6 rounded-xl border border-[#85A947]/30">
+                      <div className="flex items-center mb-4">
+                        <div className="w-8 h-8 bg-[#3E7B27] rounded-lg flex items-center justify-center mr-3">
+                          <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v11c0 1.1.9 2 2 2h2m0-18h2a2 2 0 012 2v11c0 1.1-.9 2-2 2h-2m0-18v18" />
+                          </svg>
+                        </div>
+                        <h4 className="font-bold text-gray-800 text-lg">Ingredients</h4>
+                      </div>
+                      <ul className="space-y-3">
+                        {recipe.ingredients?.map((ingredient, idx) => (
+                          <li key={idx} className="text-gray-700 flex items-center text-sm">
+                            <div className="w-2 h-2 bg-[#3E7B27] rounded-full mr-3 flex-shrink-0"></div>
+                            <span className="font-medium">{ingredient}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="bg-[#85A947]/20 backdrop-blur-sm p-6 rounded-xl border border-[#85A947]/30">
+                      <div className="flex items-center mb-4">
+                        <div className="w-8 h-8 bg-[#3E7B27] rounded-lg flex items-center justify-center mr-3">
+                          <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        </div>
+                        <h4 className="font-bold text-gray-800 text-lg">Instructions</h4>
+                      </div>
+                      <ol className="space-y-4">
+                        {recipe.instructions?.map((instruction, idx) => (
+                          <li key={idx} className="text-gray-700 flex text-sm">
+                            <div className="bg-[#3E7B27] text-white rounded-full w-7 h-7 flex items-center justify-center text-xs font-bold mr-4 mt-0.5 flex-shrink-0">
+                              {idx + 1}
+                            </div>
+                            <span className="leading-relaxed">{instruction}</span>
+                          </li>
+                        ))}
+                      </ol>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <canvas ref={canvasRef} style={{ display: 'none' }} />
       </div>
-
-      {error && (
-        <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-          {error}
-        </div>
-      )}
-
-      {loading && (
-        <div className="text-center py-8">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
-          <p className="mt-4 text-gray-600" style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}>Finding the best recipes for you...</p>
-        </div>
-      )}
-
-      {recipes.length > 0 && (
-        <div className="space-y-6">
-          <div className="flex justify-between items-center">
-            <h3 className="text-2xl font-bold text-gray-800">
-              Recipe Recommendations ({recipes.length})
-            </h3>
-            <button
-              onClick={clearResults}
-              className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors duration-200"
-            >
-              Clear Results
-            </button>
-          </div>
-
-          <div className="grid gap-6">
-            {recipes.map((recipe, index) => (
-              <div key={index} className="bg-white border border-gray-200 rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow duration-200">
-                <div className="flex justify-between items-start mb-4">
-                  <h4 className="text-xl font-bold text-gray-800">{recipe.name}</h4>
-                  <div className="flex space-x-2">
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      recipe.difficulty === 'easy' ? 'bg-green-100 text-green-800' :
-                      recipe.difficulty === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-red-100 text-red-800'
-                    }`}>
-                      {recipe.difficulty}
-                    </span>
-                    <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
-                      {recipe.cookingTime}
-                    </span>
-                    <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-medium">
-                      {recipe.servings} servings
-                    </span>
-                  </div>
-                </div>
-
-                <p className="text-gray-600 mb-4" style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}>{recipe.description}</p>
-
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <h5 className="font-semibold text-gray-800 mb-2">Ingredients:</h5>
-                    <ul className="space-y-1">
-                      {recipe.ingredients.map((ingredient, idx) => (
-                        <li key={idx} className="text-gray-600 flex items-center">
-                          <span className="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
-                          {ingredient}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h5 className="font-semibold text-gray-800 mb-2">Instructions:</h5>
-                    <ol className="space-y-2">
-                      {recipe.instructions.map((instruction, idx) => (
-                        <li key={idx} className="text-gray-600 flex">
-                          <span className="bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-medium mr-3 mt-0.5 flex-shrink-0">
-                            {idx + 1}
-                          </span>
-                          {instruction}
-                        </li>
-                      ))}
-                    </ol>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <canvas ref={canvasRef} style={{ display: 'none' }} />
     </div>
   );
 };
