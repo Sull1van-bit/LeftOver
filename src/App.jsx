@@ -19,6 +19,21 @@ function App() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
+  
+
+  const [showNotification, setShowNotification] = useState(false);
+  const [notificationMessage, setNotificationMessage] = useState("");
+  const [notificationType, setNotificationType] = useState("success");
+
+
+  const showNotificationPopup = (message, type = "success") => {
+    setNotificationMessage(message);
+    setNotificationType(type);
+    setShowNotification(true);
+    setTimeout(() => {
+      setShowNotification(false);
+    }, 2000); 
+  };
 
   useEffect(() => {
     const checkExistingSession = async () => {
@@ -45,6 +60,13 @@ function App() {
           profilePicture: null,
           email: session.user.email
         });
+        
+      
+        if (event === 'SIGNED_IN') {
+          setTimeout(() => {
+            showNotificationPopup(`Welcome back, ${session.user.user_metadata?.display_name || 'User'}!`, "success");
+          }, 100);
+        }
       } else {
         setIsLoggedIn(false);
         setUserData({
@@ -52,6 +74,13 @@ function App() {
           points: 0,
           profilePicture: null
         });
+        
+        // Show logout notification
+        if (event === 'SIGNED_OUT') {
+          setTimeout(() => {
+            showNotificationPopup('You have been logged out successfully!', "info");
+          }, 100);
+        }
       }
     });
 
@@ -78,13 +107,16 @@ function App() {
 
       if (error) {
         console.error('Login error:', error.message);
+        showNotificationPopup(`Login failed: ${error.message}`, "error");
         return { success: false, error: error.message };
       }
 
       console.log('Login successful:', data);
+      // Success notification will be shown by onAuthStateChange
       return { success: true };
     } catch (error) {
       console.error('Login error:', error);
+      showNotificationPopup('Login failed. Please try again.', "error");
       return { success: false, error: error.message };
     }
   };
@@ -104,13 +136,16 @@ function App() {
 
       if (error) {
         console.error('Sign up error:', error.message);
+        showNotificationPopup(`Sign up failed: ${error.message}`, "error");
         return { success: false, error: error.message };
       }
 
       console.log('Sign up successful:', data);
+      showNotificationPopup('Sign up successful! Please check your email for verification.', "success");
       return { success: true, message: 'Please check your email for verification link' };
     } catch (error) {
       console.error('Sign up error:', error);
+      showNotificationPopup('Sign up failed. Please try again.', "error");
       return { success: false, error: error.message };
     }
   };
@@ -149,6 +184,21 @@ function App() {
       />
       {renderCurrentView()}
       <Footer />
+      
+    
+      {showNotification && (
+        <div className={`fixed bottom-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg transition-all duration-500 ease-out ${
+          showNotification ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+        } ${
+          notificationType === 'success' ? 'bg-green-500 text-white' :
+          notificationType === 'error' ? 'bg-red-500 text-white' :
+          'bg-blue-500 text-white'
+        }`}>
+          <div className="flex items-center justify-center">
+            <span className="font-medium">{notificationMessage}</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 
