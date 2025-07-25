@@ -1,17 +1,19 @@
-# GarudaHacks 2025 - AI Recipe Recommendation App
+# GarudaHacks 2025 - LeftOver
 
-Aplikasi web modern yang menggunakan AI untuk memberikan rekomendasi resep berdasarkan bahan-bahan yang tersedia. Dibangun dengan React + Vite dan mengintegrasikan Google Gemini 2.0 Flash API.
+A web-based application that helps users and restaurant owners use food wisely and effectively.
 
-## ✨ Fitur Utama
+## Key Features
 
-- 🍳 **Rekomendasi Resep AI**: Dapatkan saran resep berdasarkan bahan yang Anda miliki
-- 📝 **Input Teks**: Masukkan bahan-bahan secara manual
-- 📷 **Input Kamera**: Foto bahan-bahan untuk analisis otomatis
-- 🎨 **UI Modern**: Interface yang responsive dan user-friendly
-- 👤 **Sistem Login**: Autentikasi pengguna dengan profil
-- 📱 **Mobile Responsive**: Optimized untuk semua perangkat
+- **Ecommerce**: A marketplace within the app
+- **AI Recipe Recommendations**: Get recipe suggestions based on the ingredients you have on hand
+- **Text Input**: Enter ingredients manually
+- **Camera Input**: Photograph ingredients for automatic analysis
+- **Modern UI**: Responsive and user-friendly interface
+- **Login System**: User authentication with profiles
+- **Mobile Responsive**: Optimized for all devices
+  
 
-## 🚀 Teknologi yang Digunakan
+##  Technology we use
 
 - **Frontend**: React 18, Vite
 - **Styling**: Tailwind CSS
@@ -19,11 +21,11 @@ Aplikasi web modern yang menggunakan AI untuk memberikan rekomendasi resep berda
 - **Camera**: WebRTC MediaDevices API
 - **Icons**: Heroicons
 
-## 📋 Prerequisites
+##  Prerequisites
 
-- Node.js (v16 atau lebih baru)
-- npm atau yarn
-- Google AI Studio account untuk Gemini API key
+- Node.js (v16 or new version)
+- npm or yarn
+- Google AI Studio account for Gemini API key
 
 ## 🛠️ Setup dan Instalasi
 
@@ -43,114 +45,101 @@ Aplikasi web modern yang menggunakan AI untuk memberikan rekomendasi resep berda
    cp .env.example .env
    ```
    
-   Edit file `.env` dan tambahkan API key Anda:
+   Edit file `.env` and add your API key :
    ```env
    VITE_GEMINI_API_KEY=your_actual_gemini_api_key_here
    ```
+   
+4. **Get Gemini API Key**
+- Visit Google AI Studio (https://aistudio.google.com/)
+- Create an account or log in
+- Generate a new API key
+- Copy the API key to the `.env` file
 
-4. **Dapatkan Gemini API Key**
-   - Kunjungi [Google AI Studio](https://aistudio.google.com/)
-   - Buat akun atau login
-   - Generate API key baru
-   - Copy API key ke file `.env`
+5. **Run the application**
+```bash
+npm run dev
+```
 
-5. **Jalankan aplikasi**
-   ```bash
-   npm run dev
-   ```
+6. **Open browser**
+The application will run at `http://localhost:5173`
+## How to Use
 
-6. **Buka browser**
-   Aplikasi akan berjalan di `http://localhost:5173`
+### Recipe Recommendations with Text Input
+1. Navigate to the "Recipe AI" page
+2. Enter the available ingredients in the text area (separate them with commas)
+3. Click "Search Recipes"
+4. The AI will provide recipe recommendations based on those ingredients.
 
-## 🎯 Cara Menggunakan
+### Recipe Recommendations with Camera
+1. Navigate to the "Recipe AI" page
+2. Click "Open Camera"
+3. Point the camera at the ingredients.
+4. Click "Take Photo"
+5. Click "Analyze Image"
+6. The AI will identify the ingredients and provide recipe recommendations.
 
-### Rekomendasi Resep dengan Input Teks
-1. Navigasi ke halaman "Recipe AI"
-2. Masukkan bahan-bahan yang tersedia di textarea (pisahkan dengan koma)
-3. Klik "Cari Resep"
-4. AI akan memberikan rekomendasi resep berdasarkan bahan tersebut
-
-### Rekomendasi Resep dengan Kamera
-1. Navigasi ke halaman "Recipe AI"
-2. Klik "Buka Kamera"
-3. Arahkan kamera ke bahan-bahan makanan
-4. Klik "Ambil Foto"
-5. Klik "Analisis Gambar"
-6. AI akan mengidentifikasi bahan dan memberikan rekomendasi resep
-
-## 📁 Struktur Project
+## Project Structure
 
 ```
 src/
 ├── components/
-│   ├── navbar.jsx              # Navigation bar dengan login system
+│   ├── navbar.jsx              # Navigation bar 
 │   ├── footer.jsx              # Footer component
-│   └── RecipeRecommendation.jsx # Komponen utama untuk fitur AI recipe
+│   └── RecipeRecommendation.jsx #  AI recipe
 ├── views/
 │   ├── home/
-│   │   └── index.jsx           # Halaman home
+│   │   └── index.jsx           # Home Page
 │   └── catalog/
-│       └── index.jsx           # Halaman catalog
+│       └── index.jsx           # Catalog Page
 ├── assets/
 └── App.jsx                     # Main app component
 ```
 
-## 🔧 API Configuration
+##  API Configuration
 
-Aplikasi menggunakan Google Gemini 2.0 Flash API dengan endpoint:
-```
+The application uses the Google Gemini 2.0 Flash API with the endpoint:
+
+
 https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent
-```
 
-Format request mencakup:
-- Text input untuk bahan-bahan
-- Image input (base64) untuk analisis foto
-- Structured JSON response dengan resep yang diformat
 
-## 🎨 Features Detail
+The request format includes:
+- Text input for ingredients
+- Image input (base64) for photo analysis
+- Structured JSON response with formatted recipe
+
+## Features Detail
 
 ### Input Methods
-- **Text Input**: Textarea untuk input manual bahan-bahan
-- **Camera Input**: WebRTC camera access untuk foto real-time
-- **Image Analysis**: AI vision untuk identifikasi bahan dari foto
+- **Text Input**: Textarea for manual input of ingredients
+- **Camera Input**: WebRTC camera access for real-time photos
+- **Image Analysis**: AI vision for ingredient identification from photos
 
 ### Recipe Display
-- Nama resep dan deskripsi
-- Daftar bahan-bahan dengan bullet points
-- Langkah-langkah memasak bernomor
-- Info tingkat kesulitan, waktu masak, dan jumlah porsi
+- Recipe name and description
+- List of ingredients with bullet points
+- Numbered cooking steps
+- Difficulty level, cooking time, and servings
 - Responsive card layout
 
 ### User Experience
-- Loading states dengan spinner
-- Error handling dan pesan informatif
-- Responsive design untuk mobile dan desktop
-- Smooth transitions dan animations
+- Loading states with spinner
+- Error handling and informative messages
+- Responsive design for mobile and Desktop
+- Smooth transitions and animations
 
-## 🚀 Build untuk Production
+## Support
 
-```bash
-npm run build
-```
+If you encounter any issues or have questions, please create an issue in this repository.
 
-File hasil build akan tersimpan di folder `dist/`.
 
-## 📄 License
-
-This project is licensed under the MIT License.
-
-## 🤝 Contributing
-
-1. Fork the project
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 📞 Support
-
-Jika Anda mengalami masalah atau memiliki pertanyaan, silakan buat issue di repository ini.
-
+## Our team
+**cuman bisa html :**
+1. Victor Chandra
+2. Rafael Romelo Gibran
+3. Hansen Japri
+4. Naufal Rabbani
 ---
 
-**GarudaHacks 2025** - Bringing AI-powered cooking recommendations to your kitchen! 🍳✨
+**GarudaHacks 2025** - Transforming Food Waste into Delicious Possibilities!

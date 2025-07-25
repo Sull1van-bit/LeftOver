@@ -355,6 +355,20 @@ const Catalog = () => {
     setCurrentView('main');
   };
 
+
+  const filterItems = (items, query) => {
+    if (!query.trim()) return items;
+    
+    const searchTerm = query.toLowerCase();
+    return items.filter(item => 
+      item.name?.toLowerCase().includes(searchTerm) ||
+      item.title?.toLowerCase().includes(searchTerm) ||
+      item.description?.toLowerCase().includes(searchTerm) ||
+      item.desc?.toLowerCase().includes(searchTerm) ||
+      item.store?.toLowerCase().includes(searchTerm)
+    );
+  };
+
   const justRescuedItems = [
     {
       id: 7,
@@ -495,7 +509,6 @@ const Catalog = () => {
     );
   };
 
-  // Render all items page
   const renderAllItemsPage = (type, title) => {
     let itemsToShow = [];
     
@@ -577,7 +590,6 @@ const Catalog = () => {
     );
   };
 
-  // Main render function
   if (currentView !== 'main') {
     const titles = {
       'nearby': 'Near Your Location',
@@ -683,6 +695,31 @@ const Catalog = () => {
 
       <div className={`max-w-6xl mx-auto px-4 ${isSearchSticky ? 'pt-16 sm:pt-20' : 'pt-4 sm:pt-6'}`}>
         
+        {/* Search Results Message */}
+        {searchQuery && (
+          <div className="mb-6">
+            <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                Search Results for "{searchQuery}"
+              </h3>
+              <p className="text-sm text-gray-600">
+                {(() => {
+                  const nearbyResults = filterItems(nearbyProducts, searchQuery);
+                  const surpriseResults = filterItems(surpriseBoxes, searchQuery);
+                  const rescuedResults = filterItems(rescuedItems, searchQuery);
+                  const totalResults = nearbyResults.length + surpriseResults.length + rescuedResults.length;
+                  
+                  return totalResults > 0 
+                    ? `Found ${totalResults} items matching your search`
+                    : "No items found matching your search";
+                })()}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Near Your Location Section */}
+        {(!searchQuery || filterItems(nearbyProducts, searchQuery).length > 0) && (
         <div className="mb-6 sm:mb-8">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-2">
@@ -872,7 +909,7 @@ const Catalog = () => {
           )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {nearbyProducts
+            {filterItems(nearbyProducts, searchQuery)
               .map(product => ({
                 ...product,
                 calculatedDistance: userLocation.latitude && userLocation.longitude && product.latitude && product.longitude
@@ -880,12 +917,16 @@ const Catalog = () => {
                   : Infinity
               }))
               .sort((a, b) => a.calculatedDistance - b.calculatedDistance)
+              .slice(0, searchQuery ? undefined : 3)
               .map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
           </div>
         </div>
+        )}
 
+        {/* Surprise Box Section */}
+        {(!searchQuery || filterItems(surpriseBoxes, searchQuery).length > 0) && (
         <div className="mb-6 sm:mb-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg sm:text-xl font-bold text-gray-800">Surprise Box</h2>
@@ -897,8 +938,7 @@ const Catalog = () => {
             </button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {surpriseBoxes.slice(0,3).map((item) => {
-              // Transform katalog data to product format
+            {filterItems(surpriseBoxes, searchQuery).slice(0, searchQuery ? undefined : 3).map((item) => {
               const product = {
                 id: item.id,
                 name: item.title,
@@ -927,7 +967,10 @@ const Catalog = () => {
             })}
           </div>
         </div>
+        )}
 
+        {/* Just Rescued Section */}
+        {(!searchQuery || filterItems(rescuedItems, searchQuery).length > 0) && (
         <div className="mb-6 sm:mb-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg sm:text-xl font-bold text-gray-800">Just Rescued!</h2>
@@ -939,7 +982,7 @@ const Catalog = () => {
             </button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {rescuedItems.slice(0,3).map((item) => {
+            {filterItems(rescuedItems, searchQuery).slice(0, searchQuery ? undefined : 3).map((item) => {
               const product = {
                 id: item.id,
                 name: item.title,
@@ -949,7 +992,7 @@ const Catalog = () => {
                 discount: "50% off",
                 store: "Rescue Store",
                 badge: "Just Rescued",
-                timeLeft: Math.floor(Math.random() * 5) + 1 + " hours left", // Random time left
+                timeLeft: Math.floor(Math.random() * 5) + 1 + " hours left", 
                 latitude: userLocation.latitude ? userLocation.latitude + 0.007 : 0,
                 longitude: userLocation.longitude ? userLocation.longitude + 0.004 : 0,
                 image: item.image || "/public/images/FoodWaste.jpg"
@@ -969,6 +1012,7 @@ const Catalog = () => {
             })}
           </div>
         </div>
+        )}
       </div>
     </div>
   );
