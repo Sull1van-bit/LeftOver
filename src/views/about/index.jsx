@@ -4,8 +4,8 @@ const About = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#EFE3C2] via-white to-[#F5F5DC]">
       
-      <div className="relative bg-gradient-to-r from-[#85A947] to-[#6B8E23] py-24 px-6 text-center overflow-hidden">
-        <div className="absolute inset-0 bg-black bg-opacity-10"></div>
+      <div className="relative py-24 px-6 text-center overflow-hidden bg-cover bg-center bg-no-repeat" style={{backgroundImage: "url('/images/aboutHeroSection.jpg')"}}>
+        <div className="absolute inset-0" ></div>
         <div className="relative z-10 max-w-5xl mx-auto">
           <div className="bg-white bg-opacity-95 backdrop-blur-sm rounded-3xl px-10 py-16 shadow-2xl border border-white border-opacity-30">
             <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-[#85A947] to-[#6B8E23] rounded-full mb-8 shadow-lg">
@@ -381,8 +381,8 @@ const About = () => {
         </div>
       </div>
 
-      <div className="py-24 px-6 bg-gradient-to-br from-[#123524] via-[#85A947] to-[#6B8E23] text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+      <div className="py-24 px-6 relative text-center overflow-hidden bg-cover bg-center bg-no-repeat" style={{backgroundImage: "url('/images/about.jpg')"}}>
+                <div className="absolute inset-0"></div>
         
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-20 left-20 w-32 h-32 border border-white rounded-full"></div>
@@ -390,7 +390,7 @@ const About = () => {
           <div className="absolute top-1/2 left-1/4 w-16 h-16 border border-white rounded-full"></div>
         </div>
         
-        <div className="relative z-10 max-w-5xl mx-auto text-center">
+        <div className="relative z-10 max-w-5xl mx-auto py-24 px-6 text-center overflow-hidden bg-cover bg-center bg-no-repeat">
           <div className="bg-white bg-opacity-10 backdrop-blur-lg rounded-3xl p-12 md:p-16 border border-white border-opacity-20 shadow-2xl">
             <div className="inline-flex items-center justify-center w-20 h-20 bg-white bg-opacity-20 rounded-full mb-8">
               <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
