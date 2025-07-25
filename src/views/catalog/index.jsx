@@ -27,6 +27,7 @@ const Catalog = () => {
   const [mapCenter, setMapCenter] = useState([0, 0]);
   const [selectedMapLocation, setSelectedMapLocation] = useState(null);
   const [surpriseBoxes, setSurpriseBoxes] = useState([]);
+  const [rescuedItems, setRescuedItems] = useState([]);
   const searchRef = useRef(null);
   const bannerRef = useRef(null);
 
@@ -319,11 +320,20 @@ const Catalog = () => {
 
  
   const fetchSurpriseBoxes = async () => {
-    const { data, error } = await supabase.from('katalog').select('*');
+    const { data, error } = await supabase.from('katalog').select('*').eq('type', 'surprise');
     if (error) {
       console.error('Error fetching surprise boxes:', error.message);
     } else {
       setSurpriseBoxes(data);
+    }
+  };
+
+  const fetchRescuedItems = async () => {
+    const { data, error } = await supabase.from('katalog').select('*').eq('type', 'rescued');
+    if (error) {
+      console.error('Error fetching rescued items:', error.message);
+    } else {
+      setRescuedItems(data);
     }
   };
 
@@ -375,6 +385,7 @@ const Catalog = () => {
   useEffect(() => {
     getCurrentLocation();
     fetchSurpriseBoxes(); 
+    fetchRescuedItems();
   }, []);
 
   useEffect(() => {
@@ -798,17 +809,35 @@ const Catalog = () => {
             </button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {justRescuedItems
-              .map(product => ({
-                ...product,
-                calculatedDistance: userLocation.latitude && userLocation.longitude && product.latitude && product.longitude
-                  ? calculateDistance(userLocation.latitude, userLocation.longitude, product.latitude, product.longitude)
-                  : Infinity
-              }))
-              .sort((a, b) => a.calculatedDistance - b.calculatedDistance)
-              .map((product) => (
-                <ProductCard key={product.id} product={product} showBadge={true} />
-              ))}
+            {rescuedItems.map((item) => {
+              // Transform katalog data to product format for rescued items
+              const product = {
+                id: item.id,
+                name: item.title,
+                description: item.desc,
+                originalPrice: `Rp${(item.price * 2).toFixed(0)}`,
+                discountPrice: `Rp${item.price}`,
+                discount: "50% off",
+                store: "Rescue Store",
+                badge: "Just Rescued",
+                timeLeft: Math.floor(Math.random() * 5) + 1 + " hours left", // Random time left
+                latitude: userLocation.latitude ? userLocation.latitude + 0.007 : 0,
+                longitude: userLocation.longitude ? userLocation.longitude + 0.004 : 0,
+                image: item.image || "/public/images/FoodWaste.jpg"
+              };
+
+              const calculatedDistance = userLocation.latitude && userLocation.longitude && product.latitude && product.longitude
+                ? calculateDistance(userLocation.latitude, userLocation.longitude, product.latitude, product.longitude)
+                : Infinity;
+
+              return (
+                <ProductCard 
+                  key={item.id} 
+                  product={{ ...product, calculatedDistance }} 
+                  showBadge={true} 
+                />
+              );
+            })}
           </div>
         </div>
       </div>
