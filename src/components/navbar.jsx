@@ -33,6 +33,7 @@ const Navbar = ({
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
+        scrollToTop();
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
@@ -77,6 +78,17 @@ const Navbar = ({
     setSignUpData({ displayName: '', email: '', password: '' });
   };
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleNavClick = (href) => {
+    scrollToTop();
+    setTimeout(() => {
+      window.location.hash = href;
+    }, 100);
+  };
+
   const handleLogout = () => {
     onLogout();
     setIsUserMenuOpen(false);
@@ -88,25 +100,44 @@ const Navbar = ({
 
   return (
     <nav className="bg-gradient-to-r from-[#85A947] to-[#9BB85C] sticky top-0 z-50 shadow-lg backdrop-blur-md">
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex-shrink-0">
-            <img src='/images/Logo.png' alt="Logo" className="h-8 w-auto" />
+            <button
+              onClick={() => handleNavClick('home')}
+              className="transition-transform duration-200 hover:scale-110 focus:outline-none"
+              aria-label="Go to home"
+            >
+              <img src='/images/Logo.png' alt="Logo" className="h-8 w-auto" />
+            </button>
           </div>
           
           <div className="hidden md:flex items-center space-x-1">
-            <a href="#home" className="text-white hover:bg-white/15 px-4 py-2 rounded-lg transition-all duration-200 font-medium">
+            <button 
+              onClick={() => handleNavClick('home')}
+              className="text-white hover:bg-white/15 px-4 py-2 rounded-lg transition-all duration-200 font-medium"
+            >
               Home
-            </a>
-            <a href="#catalog" className="text-white hover:bg-white/15 px-4 py-2 rounded-lg transition-all duration-200 font-medium">
+            </button>
+            <button 
+              onClick={() => handleNavClick('catalog')}
+              className="text-white hover:bg-white/15 px-4 py-2 rounded-lg transition-all duration-200 font-medium"
+            >
               Catalog
-            </a>
-            <a href="#recipe" className="text-white hover:bg-white/15 px-4 py-2 rounded-lg transition-all duration-200 font-medium">
+            </button>
+            <button 
+              onClick={() => handleNavClick('recipe')}
+              className="text-white hover:bg-white/15 px-4 py-2 rounded-lg transition-all duration-200 font-medium"
+            >
               Recipe Finder
-            </a>
-            <a href="#about" className="text-white hover:bg-white/15 px-4 py-2 rounded-lg transition-all duration-200 font-medium">
+            </button>
+            <button 
+              onClick={() => handleNavClick('about')}
+              className="text-white hover:bg-white/15 px-4 py-2 rounded-lg transition-all duration-200 font-medium"
+            >
               About
-            </a>
+            </button>
           </div>
 
           <div className="flex items-center space-x-4">
@@ -338,7 +369,10 @@ const Navbar = ({
                         </button>
 
                         <button 
-                          onClick={() => window.location.hash = 'dashboard'}
+                          onClick={() => {
+                            handleNavClick('dashboard');
+                            setIsUserMenuOpen(false);
+                          }}
                           className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-50 flex items-center space-x-3 transition-colors duration-150"
                         >
                           <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -364,8 +398,8 @@ const Navbar = ({
 
                         <button
                           onClick={() => {
+                            handleNavClick('katalog-manager');
                             setIsUserMenuOpen(false);
-                            window.location.hash = 'katalog-manager';
                           }}
                           className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-50 flex items-center space-x-3 transition-colors duration-150"
                         >
@@ -414,24 +448,42 @@ const Navbar = ({
       
       {isOpen && (
         <div className="md:hidden bg-gradient-to-r from-[#85A947] to-[#9BB85C] px-2 pt-2 pb-3 space-y-1 shadow-xl border-t border-white/20">
-          <a href="#home" className="block text-white px-4 py-3 rounded-lg hover:bg-white/15 transition-all duration-200 font-medium">
+          <button 
+            onClick={() => {handleNavClick('home'); setIsOpen(false);}}
+            className="block w-full text-left text-white px-4 py-3 rounded-lg hover:bg-white/15 transition-all duration-200 font-medium"
+          >
             Home
-          </a>
-          <a href="#catalog" className="block text-white px-4 py-3 rounded-lg hover:bg-white/15 transition-all duration-200 font-medium">
+          </button>
+          <button 
+            onClick={() => {handleNavClick('catalog'); setIsOpen(false);}}
+            className="block w-full text-left text-white px-4 py-3 rounded-lg hover:bg-white/15 transition-all duration-200 font-medium"
+          >
             Catalog
-          </a>
-          <a href="#recipe" className="block text-white px-4 py-3 rounded-lg hover:bg-white/15 transition-all duration-200 font-medium">
+          </button>
+          <button 
+            onClick={() => {handleNavClick('recipe'); setIsOpen(false);}}
+            className="block w-full text-left text-white px-4 py-3 rounded-lg hover:bg-white/15 transition-all duration-200 font-medium"
+          >
             Recipe AI
-          </a>
-          <a href="#about" className="block text-white px-4 py-3 rounded-lg hover:bg-white/15 transition-all duration-200 font-medium">
+          </button>
+          <button 
+            onClick={() => {handleNavClick('about'); setIsOpen(false);}}
+            className="block w-full text-left text-white px-4 py-3 rounded-lg hover:bg-white/15 transition-all duration-200 font-medium"
+          >
             About
-          </a>
-          <a href="#services" className="block text-white px-4 py-3 rounded-lg hover:bg-white/15 transition-all duration-200 font-medium">
+          </button>
+          <button 
+            onClick={() => {handleNavClick('services'); setIsOpen(false);}}
+            className="block w-full text-left text-white px-4 py-3 rounded-lg hover:bg-white/15 transition-all duration-200 font-medium"
+          >
             Services
-          </a>
-          <a href="#contact" className="block text-white px-4 py-3 rounded-lg hover:bg-white/15 transition-all duration-200 font-medium">
+          </button>
+          <button 
+            onClick={() => {handleNavClick('contact'); setIsOpen(false);}}
+            className="block w-full text-left text-white px-4 py-3 rounded-lg hover:bg-white/15 transition-all duration-200 font-medium"
+          >
             Contact
-          </a>
+          </button>
         </div>
       )}
       {showKatalogModal && (
