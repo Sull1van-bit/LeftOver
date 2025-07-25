@@ -3,6 +3,9 @@ import React, { useState, useEffect } from 'react';
 import Navbar from './components/navbar';
 import Footer from './components/footer';
 import Home from './views/home';
+import Catalog from './views/catalog';
+import About from './views/about';
+import RecipeRecommendation from './components/RecipeRecommendation';
 import './App.css';
 
 
@@ -106,7 +109,12 @@ function App() {
 
   const renderCurrentView = () => {
     switch (currentView) {
-      
+      case 'catalog':
+        return <Catalog />;
+      case 'about':
+        return <About />;
+      case 'recipe':
+        return <RecipeRecommendation />;
       case 'home':
       default:
         return <Home />;

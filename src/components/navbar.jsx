@@ -90,18 +90,21 @@ const Navbar = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex-shrink-0">
-            <img src='/images/logo.jpg' alt="Logo" className="h-8 w-auto" />
+            <img src='/images/Logo.png' alt="Logo" className="h-8 w-auto" />
           </div>
           
           <div className="hidden md:flex items-center space-x-1">
             <a href="#home" className="text-white hover:bg-white/15 px-4 py-2 rounded-lg transition-all duration-200 font-medium">
               Home
             </a>
+            <a href="#catalog" className="text-white hover:bg-white/15 px-4 py-2 rounded-lg transition-all duration-200 font-medium">
+              Catalog
+            </a>
+            <a href="#recipe" className="text-white hover:bg-white/15 px-4 py-2 rounded-lg transition-all duration-200 font-medium">
+              Recipe AI
+            </a>
             <a href="#about" className="text-white hover:bg-white/15 px-4 py-2 rounded-lg transition-all duration-200 font-medium">
               About
-            </a>
-            <a href="#services" className="text-white hover:bg-white/15 px-4 py-2 rounded-lg transition-all duration-200 font-medium">
-              Services
             </a>
             <a href="#contact" className="text-white hover:bg-white/15 px-4 py-2 rounded-lg transition-all duration-200 font-medium">
               Contact
@@ -405,6 +408,12 @@ const Navbar = ({
         <div className="md:hidden bg-gradient-to-r from-[#85A947] to-[#9BB85C] px-2 pt-2 pb-3 space-y-1 shadow-xl border-t border-white/20">
           <a href="#home" className="block text-white px-4 py-3 rounded-lg hover:bg-white/15 transition-all duration-200 font-medium">
             Home
+          </a>
+          <a href="#catalog" className="block text-white px-4 py-3 rounded-lg hover:bg-white/15 transition-all duration-200 font-medium">
+            Catalog
+          </a>
+          <a href="#recipe" className="block text-white px-4 py-3 rounded-lg hover:bg-white/15 transition-all duration-200 font-medium">
+            Recipe AI
           </a>
           <a href="#about" className="block text-white px-4 py-3 rounded-lg hover:bg-white/15 transition-all duration-200 font-medium">
             About
