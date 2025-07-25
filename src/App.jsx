@@ -3,6 +3,10 @@ import React, { useState, useEffect } from 'react';
 import Navbar from './components/navbar';
 import Footer from './components/footer';
 import Home from './views/home';
+import Catalog from './views/catalog';
+import About from './views/about';
+import { DashboardOnly } from './views/dashboard';
+import RecipeRecommendation from './components/RecipeRecommendation';
 import './App.css';
 
 
@@ -106,7 +110,14 @@ function App() {
 
   const renderCurrentView = () => {
     switch (currentView) {
-      
+      case 'catalog':
+        return <Catalog />;
+      case 'about':
+        return <About />;
+      case 'recipe':
+        return <RecipeRecommendation />;
+      case 'dashboard':
+        return <DashboardOnly />;
       case 'home':
       default:
         return <Home />;
@@ -115,16 +126,18 @@ function App() {
 
   return (
     <div className="min-h-screen bg-[#EFE3C2]">
-      <Navbar 
-        isLoggedIn={isLoggedIn}
-        userData={userData}
-        onLogin={handleLogin}
-        onSignUp={handleSignUp}
-        onLogout={handleLogout}
-        onUpdateUserData={updateUserData}
-      />
+      {currentView !== 'dashboard' && (
+        <Navbar 
+          isLoggedIn={isLoggedIn}
+          userData={userData}
+          onLogin={handleLogin}
+          onSignUp={handleSignUp}
+          onLogout={handleLogout}
+          onUpdateUserData={updateUserData}
+        />
+      )}
       {renderCurrentView()}
-      <Footer />
+      {currentView !== 'dashboard' && <Footer />}
     </div>
   );
 }

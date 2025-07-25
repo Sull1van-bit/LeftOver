@@ -1,12 +1,156 @@
-# React + Vite
+# GarudaHacks 2025 - AI Recipe Recommendation App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplikasi web modern yang menggunakan AI untuk memberikan rekomendasi resep berdasarkan bahan-bahan yang tersedia. Dibangun dengan React + Vite dan mengintegrasikan Google Gemini 2.0 Flash API.
 
-Currently, two official plugins are available:
+## ✨ Fitur Utama
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 🍳 **Rekomendasi Resep AI**: Dapatkan saran resep berdasarkan bahan yang Anda miliki
+- 📝 **Input Teks**: Masukkan bahan-bahan secara manual
+- 📷 **Input Kamera**: Foto bahan-bahan untuk analisis otomatis
+- 🎨 **UI Modern**: Interface yang responsive dan user-friendly
+- 👤 **Sistem Login**: Autentikasi pengguna dengan profil
+- 📱 **Mobile Responsive**: Optimized untuk semua perangkat
 
-## Expanding the ESLint configuration
+## 🚀 Teknologi yang Digunakan
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- **Frontend**: React 18, Vite
+- **Styling**: Tailwind CSS
+- **AI**: Google Gemini 2.0 Flash API
+- **Camera**: WebRTC MediaDevices API
+- **Icons**: Heroicons
+
+## 📋 Prerequisites
+
+- Node.js (v16 atau lebih baru)
+- npm atau yarn
+- Google AI Studio account untuk Gemini API key
+
+## 🛠️ Setup dan Instalasi
+
+1. **Clone repository**
+   ```bash
+   git clone <repository-url>
+   cd GarudaHacks2025
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Setup Environment Variables**
+   ```bash
+   cp .env.example .env
+   ```
+   
+   Edit file `.env` dan tambahkan API key Anda:
+   ```env
+   VITE_GEMINI_API_KEY=your_actual_gemini_api_key_here
+   ```
+
+4. **Dapatkan Gemini API Key**
+   - Kunjungi [Google AI Studio](https://aistudio.google.com/)
+   - Buat akun atau login
+   - Generate API key baru
+   - Copy API key ke file `.env`
+
+5. **Jalankan aplikasi**
+   ```bash
+   npm run dev
+   ```
+
+6. **Buka browser**
+   Aplikasi akan berjalan di `http://localhost:5173`
+
+## 🎯 Cara Menggunakan
+
+### Rekomendasi Resep dengan Input Teks
+1. Navigasi ke halaman "Recipe AI"
+2. Masukkan bahan-bahan yang tersedia di textarea (pisahkan dengan koma)
+3. Klik "Cari Resep"
+4. AI akan memberikan rekomendasi resep berdasarkan bahan tersebut
+
+### Rekomendasi Resep dengan Kamera
+1. Navigasi ke halaman "Recipe AI"
+2. Klik "Buka Kamera"
+3. Arahkan kamera ke bahan-bahan makanan
+4. Klik "Ambil Foto"
+5. Klik "Analisis Gambar"
+6. AI akan mengidentifikasi bahan dan memberikan rekomendasi resep
+
+## 📁 Struktur Project
+
+```
+src/
+├── components/
+│   ├── navbar.jsx              # Navigation bar dengan login system
+│   ├── footer.jsx              # Footer component
+│   └── RecipeRecommendation.jsx # Komponen utama untuk fitur AI recipe
+├── views/
+│   ├── home/
+│   │   └── index.jsx           # Halaman home
+│   └── catalog/
+│       └── index.jsx           # Halaman catalog
+├── assets/
+└── App.jsx                     # Main app component
+```
+
+## 🔧 API Configuration
+
+Aplikasi menggunakan Google Gemini 2.0 Flash API dengan endpoint:
+```
+https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent
+```
+
+Format request mencakup:
+- Text input untuk bahan-bahan
+- Image input (base64) untuk analisis foto
+- Structured JSON response dengan resep yang diformat
+
+## 🎨 Features Detail
+
+### Input Methods
+- **Text Input**: Textarea untuk input manual bahan-bahan
+- **Camera Input**: WebRTC camera access untuk foto real-time
+- **Image Analysis**: AI vision untuk identifikasi bahan dari foto
+
+### Recipe Display
+- Nama resep dan deskripsi
+- Daftar bahan-bahan dengan bullet points
+- Langkah-langkah memasak bernomor
+- Info tingkat kesulitan, waktu masak, dan jumlah porsi
+- Responsive card layout
+
+### User Experience
+- Loading states dengan spinner
+- Error handling dan pesan informatif
+- Responsive design untuk mobile dan desktop
+- Smooth transitions dan animations
+
+## 🚀 Build untuk Production
+
+```bash
+npm run build
+```
+
+File hasil build akan tersimpan di folder `dist/`.
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+## 🤝 Contributing
+
+1. Fork the project
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📞 Support
+
+Jika Anda mengalami masalah atau memiliki pertanyaan, silakan buat issue di repository ini.
+
+---
+
+**GarudaHacks 2025** - Bringing AI-powered cooking recommendations to your kitchen! 🍳✨
