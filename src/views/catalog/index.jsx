@@ -28,6 +28,8 @@ const Catalog = () => {
   const [selectedMapLocation, setSelectedMapLocation] = useState(null);
   const [surpriseBoxes, setSurpriseBoxes] = useState([]);
   const [rescuedItems, setRescuedItems] = useState([]);
+  const [currentView, setCurrentView] = useState('main'); // 'main', 'nearby', 'surprise', 'rescued'
+  const [allItems, setAllItems] = useState([]);
   const searchRef = useRef(null);
   const bannerRef = useRef(null);
 
@@ -337,6 +339,23 @@ const Catalog = () => {
     }
   };
 
+  const fetchAllItems = async () => {
+    const { data, error } = await supabase.from('katalog').select('*');
+    if (error) {
+      console.error('Error fetching all items:', error.message);
+    } else {
+      setAllItems(data);
+    }
+  };
+
+  const handleSeeMore = (type) => {
+    setCurrentView(type);
+  };
+
+  const handleBackToMain = () => {
+    setCurrentView('main');
+  };
+
   const justRescuedItems = [
     {
       id: 7,
@@ -386,6 +405,7 @@ const Catalog = () => {
     getCurrentLocation();
     fetchSurpriseBoxes(); 
     fetchRescuedItems();
+    fetchAllItems();
   }, []);
 
   useEffect(() => {
@@ -475,6 +495,98 @@ const Catalog = () => {
       </div>
     );
   };
+
+  // Render all items page
+  const renderAllItemsPage = (type, title) => {
+    let itemsToShow = [];
+    
+    if (type === 'nearby') {
+      itemsToShow = nearbyProducts;
+    } else if (type === 'surprise') {
+      itemsToShow = allItems.filter(item => item.type === 'surprise').map(item => ({
+        id: item.id,
+        name: item.title,
+        description: item.desc,
+        originalPrice: `Rp${(item.price * 1.5).toFixed(0)}`,
+        discountPrice: `Rp${item.price}`,
+        discount: "33% off",
+        store: "Local Store",
+        badge: "Surprise Box",
+        latitude: userLocation.latitude ? userLocation.latitude + 0.010 : 0,
+        longitude: userLocation.longitude ? userLocation.longitude + 0.002 : 0,
+        image: item.image || "/public/images/FoodWaste.jpg"
+      }));
+    } else if (type === 'rescued') {
+      itemsToShow = allItems.filter(item => item.type === 'rescued').map(item => ({
+        id: item.id,
+        name: item.title,
+        description: item.desc,
+        originalPrice: `Rp${(item.price * 2).toFixed(0)}`,
+        discountPrice: `Rp${item.price}`,
+        discount: "50% off",
+        store: "Rescue Store",
+        badge: "Just Rescued",
+        timeLeft: Math.floor(Math.random() * 5) + 1 + " hours left",
+        latitude: userLocation.latitude ? userLocation.latitude + 0.007 : 0,
+        longitude: userLocation.longitude ? userLocation.longitude + 0.004 : 0,
+        image: item.image || "/public/images/FoodWaste.jpg"
+      }));
+    }
+
+    return (
+      <div className="min-h-screen bg-[#EFE3C2]">
+        <div className="max-w-6xl mx-auto px-4 py-6">
+          {/* Header with back button */}
+          <div className="flex items-center mb-6">
+            <button 
+              onClick={handleBackToMain}
+              className="mr-4 p-2 rounded-full bg-white shadow-md hover:shadow-lg transition-shadow duration-200"
+            >
+              <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">{title}</h1>
+          </div>
+
+          {/* Items grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+            {itemsToShow.map((product, index) => {
+              const calculatedDistance = userLocation.latitude && userLocation.longitude && product.latitude && product.longitude
+                ? calculateDistance(userLocation.latitude, userLocation.longitude, product.latitude, product.longitude)
+                : Infinity;
+
+              return (
+                <ProductCard 
+                  key={product.id || index} 
+                  product={{ ...product, calculatedDistance }} 
+                  showBadge={type !== 'nearby'} 
+                />
+              );
+            })}
+          </div>
+
+          {itemsToShow.length === 0 && (
+            <div className="text-center py-12">
+              <div className="text-gray-400 text-6xl mb-4">📦</div>
+              <h3 className="text-xl font-semibold text-gray-600 mb-2">No items found</h3>
+              <p className="text-gray-500">There are no items available in this category at the moment.</p>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  // Main render function
+  if (currentView !== 'main') {
+    const titles = {
+      'nearby': 'Near Your Location',
+      'surprise': 'All Surprise Boxes',
+      'rescued': 'All Rescued Items'
+    };
+    return renderAllItemsPage(currentView, titles[currentView]);
+  }
 
   return (
     <div className="min-h-screen bg-[#EFE3C2]">
@@ -607,7 +719,10 @@ const Catalog = () => {
                 </div>
               </div>
             </div>
-            <button className="text-green-600 hover:text-green-700 font-medium transition-colors duration-200 text-sm sm:text-base">
+            <button 
+              onClick={() => handleSeeMore('nearby')}
+              className="text-green-600 hover:text-green-700 font-medium transition-colors duration-200 text-sm sm:text-base"
+            >
               See More →
             </button>
           </div>
@@ -765,7 +880,10 @@ const Catalog = () => {
         <div className="mb-6 sm:mb-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg sm:text-xl font-bold text-gray-800">Surprise Box</h2>
-            <button className="text-green-600 hover:text-green-700 font-medium transition-colors duration-200 text-sm sm:text-base">
+            <button 
+              onClick={() => handleSeeMore('surprise')}
+              className="text-green-600 hover:text-green-700 font-medium transition-colors duration-200 text-sm sm:text-base"
+            >
               See More →
             </button>
           </div>
@@ -804,7 +922,10 @@ const Catalog = () => {
         <div className="mb-6 sm:mb-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg sm:text-xl font-bold text-gray-800">Just Rescued!</h2>
-            <button className="text-green-600 hover:text-green-700 font-medium transition-colors duration-200 text-sm sm:text-base">
+            <button 
+              onClick={() => handleSeeMore('rescued')}
+              className="text-green-600 hover:text-green-700 font-medium transition-colors duration-200 text-sm sm:text-base"
+            >
               See More →
             </button>
           </div>
