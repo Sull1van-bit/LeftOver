@@ -283,8 +283,8 @@ const Catalog = () => {
       id: 1,
       name: "Fresh Vegetables Bundle",
       description: "Mixed seasonal vegetables",
-      originalPrice: "₹200",
-      discountPrice: "₹120",
+      originalPrice: "Rp200",
+      discountPrice: "Rp120",
       discount: "40% off",
       store: "Green Grocers",
       latitude: userLocation.latitude ? userLocation.latitude + 0.005 : 0,
@@ -295,8 +295,8 @@ const Catalog = () => {
       id: 2,
       name: "Bakery Mix Pack",
       description: "Assorted bread and pastries",
-      originalPrice: "₹150",
-      discountPrice: "₹75",
+      originalPrice: "Rp150",
+      discountPrice: "Rp75",
       discount: "50% off",
       store: "City Bakery",
       latitude: userLocation.latitude ? userLocation.latitude + 0.008 : 0,
@@ -307,8 +307,8 @@ const Catalog = () => {
       id: 3,
       name: "Fruit Surprise Box",
       description: "Seasonal fruits variety pack",
-      originalPrice: "₹300",
-      discountPrice: "₹180",
+      originalPrice: "Rp300",
+      discountPrice: "Rp180",
       discount: "40% off",
       store: "Fresh Mart",
       latitude: userLocation.latitude ? userLocation.latitude + 0.003 : 0,
@@ -317,7 +317,7 @@ const Catalog = () => {
     }
   ];
 
-  // Fetch surprise boxes from Supabase (like KatalogManager)
+ 
   const fetchSurpriseBoxes = async () => {
     const { data, error } = await supabase.from('katalog').select('*');
     if (error) {
@@ -332,8 +332,8 @@ const Catalog = () => {
       id: 7,
       name: "Restaurant Surplus",
       description: "High-quality prepared ingredients",
-      originalPrice: "₹350",
-      discountPrice: "₹175",
+      originalPrice: "Rp350",
+      discountPrice: "Rp175",
       discount: "50% off",
       store: "Fine Dine Restaurant",
       badge: "Just Rescued",
@@ -346,8 +346,8 @@ const Catalog = () => {
       id: 8,
       name: "Organic Produce",
       description: "Slightly imperfect organic vegetables",
-      originalPrice: "₹280",
-      discountPrice: "₹140",
+      originalPrice: "Rp280",
+      discountPrice: "Rp140",
       discount: "50% off",
       store: "Organic Valley",
       badge: "Just Rescued",
@@ -360,8 +360,8 @@ const Catalog = () => {
       id: 9,
       name: "Dairy Products",
       description: "Fresh dairy nearing expiry",
-      originalPrice: "₹200",
-      discountPrice: "₹100",
+      originalPrice: "Rp200",
+      discountPrice: "Rp100",
       discount: "50% off",
       store: "Local Dairy",
       badge: "Just Rescued",
@@ -374,7 +374,7 @@ const Catalog = () => {
 
   useEffect(() => {
     getCurrentLocation();
-    fetchSurpriseBoxes(); // Fetch data like KatalogManager
+    fetchSurpriseBoxes(); 
   }, []);
 
   useEffect(() => {
@@ -765,8 +765,8 @@ const Catalog = () => {
                 id: item.id,
                 name: item.title,
                 description: item.desc,
-                originalPrice: `₹${(item.price * 1.5).toFixed(0)}`,
-                discountPrice: `₹${item.price}`,
+                originalPrice: `Rp${(item.price * 1.5).toFixed(0)}`,
+                discountPrice: `Rp${item.price}`,
                 discount: "33% off",
                 store: "Local Store",
                 badge: "Surprise Box",

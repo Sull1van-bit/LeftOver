@@ -3,10 +3,11 @@ import { supabase } from '../supabaseClient';
 
 function KatalogManager() {
   const [katalog, setKatalog] = useState([]);
-  const [form, setForm] = useState({ title: '', desc: '', image: '', price: '' });
+  const [form, setForm] = useState({ title: '', desc: '', image: '', price: '', type: '' });
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [editingId, setEditingId] = useState(null);
 
   // Fetch katalog data
   const fetchKatalog = async () => {
@@ -37,7 +38,7 @@ function KatalogManager() {
     e.preventDefault();
     setLoading(true);
     setError('');
-    if (!form.title || !form.desc || !form.price || !file) {
+    if (!form.title || !form.desc || !form.price || !form.type) {
       setError('All fields are required.');
       setLoading(false);
       return;
@@ -57,11 +58,11 @@ function KatalogManager() {
     imageUrl = publicUrlData.publicUrl;
 
     const { error: insertError } = await supabase.from('katalog').insert([
-      { title: form.title, desc: form.desc, image: imageUrl, price: parseFloat(form.price) }
+      { title: form.title, desc: form.desc, image: imageUrl, price: parseFloat(form.price), type: form.type }
     ]);
     if (insertError) setError(insertError.message);
     else {
-      setForm({ title: '', desc: '', image: '', price: '' });
+      setForm({ title: '', desc: '', image: '', price: '', type: '' });
       setFile(null);
       fetchKatalog();
     }
@@ -93,6 +94,16 @@ function KatalogManager() {
           accept="image/*"
           onChange={handleFileChange}
         />
+        <select
+          className="w-full border px-3 py-2 rounded"
+          name="type"
+          value={form.type}
+          onChange={handleChange}
+        >
+          <option value="">Select Type</option>
+          <option value="surprise">Surprise</option>
+          <option value="rescued">Rescued</option>
+        </select>
         <input
           className="w-full border px-3 py-2 rounded"
           name="price"
@@ -122,6 +133,13 @@ function KatalogManager() {
               <div className="font-bold">{item.title}</div>
               <div className="text-sm text-gray-600">{item.desc}</div>
               <div className="text-green-700 font-semibold">Rp {item.price}</div>
+              {item.type && (
+                <div className={`text-xs px-2 py-1 rounded-full inline-block mt-1 ${
+                  item.type === 'surprise' ? 'bg-purple-100 text-purple-600' : 'bg-red-100 text-red-600'
+                }`}>
+                  {item.type}
+                </div>
+              )}
             </div>
           </li>
         ))}
