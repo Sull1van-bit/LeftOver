@@ -28,7 +28,7 @@ const Catalog = () => {
   const [selectedMapLocation, setSelectedMapLocation] = useState(null);
   const [surpriseBoxes, setSurpriseBoxes] = useState([]);
   const [rescuedItems, setRescuedItems] = useState([]);
-  const [currentView, setCurrentView] = useState('main'); // 'main', 'nearby', 'surprise', 'rescued'
+  const [currentView, setCurrentView] = useState('main'); 
   const [allItems, setAllItems] = useState([]);
   const searchRef = useRef(null);
   const bannerRef = useRef(null);
@@ -291,7 +291,7 @@ const Catalog = () => {
       store: "Green Grocers",
       latitude: userLocation.latitude ? userLocation.latitude + 0.005 : 0,
       longitude: userLocation.longitude ? userLocation.longitude + 0.005 : 0,
-      image: "/public/images/FoodWaste.jpg"
+      image: "/images/FoodWaste.jpg"
     },
     {
       id: 2,
@@ -303,7 +303,7 @@ const Catalog = () => {
       store: "City Bakery",
       latitude: userLocation.latitude ? userLocation.latitude + 0.008 : 0,
       longitude: userLocation.longitude ? userLocation.longitude + 0.003 : 0,
-      image: "/public/images/nearby.jpg"
+      image: "/images/nearby.jpg"
     },
     {
       id: 3,
@@ -315,7 +315,7 @@ const Catalog = () => {
       store: "Fresh Mart",
       latitude: userLocation.latitude ? userLocation.latitude + 0.003 : 0,
       longitude: userLocation.longitude ? userLocation.longitude + 0.007 : 0,
-      image: "/public/images/logo.jpg"
+      image: "/images/logo.jpg"
     }
   ];
 
