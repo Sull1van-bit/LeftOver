@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from './components/navbar';
 import Footer from './components/footer';
 import Home from './views/home';
+import { supabase } from './supaBaseClient';
 import './App.css';
 
 
@@ -14,23 +15,44 @@ function App() {
     profilePicture: null
   });
   const [currentView, setCurrentView] = useState('home');
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
-    const checkExistingSession = () => {
-      const savedSession = localStorage.getItem('userSession');
-      if (savedSession) {
-        try {
-          const sessionData = JSON.parse(savedSession);
-          setIsLoggedIn(true);
-          setUserData(sessionData.userData);
-        } catch (error) {
-          console.error('Error parsing saved session:', error);
-          localStorage.removeItem('userSession');
-        }
+    const checkExistingSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        setIsLoggedIn(true);
+        setUserData({
+          name: session.user.email,
+          points: 1250,
+          profilePicture: null,
+          email: session.user.email
+        });
       }
     };
 
     checkExistingSession();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        setIsLoggedIn(true);
+        setUserData({
+          name: session.user.email,
+          points: 1250,
+          profilePicture: null,
+          email: session.user.email
+        });
+      } else {
+        setIsLoggedIn(false);
+        setUserData({
+          name: '',
+          points: 0,
+          profilePicture: null
+        });
+      }
+    });
 
     const handleHashChange = () => {
       const hash = window.location.hash.slice(1) || 'home';
@@ -42,27 +64,23 @@ function App() {
 
     return () => {
       window.removeEventListener('hashchange', handleHashChange);
+      subscription.unsubscribe();
     };
   }, []);
 
   const handleLogin = async (credentials) => {
     try {
-      const simulatedUserData = {
-        name: 'John Doe',
-        points: 1250,
-        profilePicture: null,
-        email: 'john@example.com'
-      };
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: credentials.email,
+        password: credentials.password,
+      });
 
-      setIsLoggedIn(true);
-      setUserData(simulatedUserData);
+      if (error) {
+        console.error('Login error:', error.message);
+        return { success: false, error: error.message };
+      }
 
-      localStorage.setItem('userSession', JSON.stringify({
-        isLoggedIn: true,
-        userData: simulatedUserData,
-        timestamp: Date.now()
-      }));
-
+      console.log('Login successful:', data);
       return { success: true };
     } catch (error) {
       console.error('Login error:', error);
@@ -72,36 +90,35 @@ function App() {
 
   const handleSignUp = async (userData) => {
     try {
-      console.log('Sign up with:', userData);
-      return { success: true };
+      const { data, error } = await supabase.auth.signUp({
+        email: userData.email,
+        password: userData.password,
+      });
+
+      if (error) {
+        console.error('Sign up error:', error.message);
+        return { success: false, error: error.message };
+      }
+
+      console.log('Sign up successful:', data);
+      return { success: true, message: 'Please check your email for verification link' };
     } catch (error) {
       console.error('Sign up error:', error);
       return { success: false, error: error.message };
     }
   };
 
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    setUserData({
-      name: '',
-      points: 0,
-      profilePicture: null
-    });
-    
-    localStorage.removeItem('userSession');
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error('Logout error:', error);
+    }
+    // State will be updated automatically by onAuthStateChange
   };
 
   const updateUserData = (newData) => {
     const updatedData = { ...userData, ...newData };
     setUserData(updatedData);
-    
-    if (isLoggedIn) {
-      localStorage.setItem('userSession', JSON.stringify({
-        isLoggedIn: true,
-        userData: updatedData,
-        timestamp: Date.now()
-      }));
-    }
   };
 
   const renderCurrentView = () => {
@@ -127,6 +144,8 @@ function App() {
       <Footer />
     </div>
   );
+
+
 }
 
 export default App;
