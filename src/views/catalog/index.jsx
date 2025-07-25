@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
+import { supabase } from '../../supabaseClient';
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -25,6 +26,10 @@ const Catalog = () => {
   const [showMapPicker, setShowMapPicker] = useState(false);
   const [mapCenter, setMapCenter] = useState([0, 0]);
   const [selectedMapLocation, setSelectedMapLocation] = useState(null);
+  const [surpriseBoxes, setSurpriseBoxes] = useState([]);
+  const [rescuedItems, setRescuedItems] = useState([]);
+  const [currentView, setCurrentView] = useState('main'); // 'main', 'nearby', 'surprise', 'rescued'
+  const [allItems, setAllItems] = useState([]);
   const searchRef = useRef(null);
   const bannerRef = useRef(null);
 
@@ -281,8 +286,8 @@ const Catalog = () => {
       id: 1,
       name: "Fresh Vegetables Bundle",
       description: "Mixed seasonal vegetables",
-      originalPrice: "₹200",
-      discountPrice: "₹120",
+      originalPrice: "Rp200",
+      discountPrice: "Rp120",
       discount: "40% off",
       store: "Green Grocers",
       latitude: userLocation.latitude ? userLocation.latitude + 0.005 : 0,
@@ -293,8 +298,8 @@ const Catalog = () => {
       id: 2,
       name: "Bakery Mix Pack",
       description: "Assorted bread and pastries",
-      originalPrice: "₹150",
-      discountPrice: "₹75",
+      originalPrice: "Rp150",
+      discountPrice: "Rp75",
       discount: "50% off",
       store: "City Bakery",
       latitude: userLocation.latitude ? userLocation.latitude + 0.008 : 0,
@@ -305,8 +310,8 @@ const Catalog = () => {
       id: 3,
       name: "Fruit Surprise Box",
       description: "Seasonal fruits variety pack",
-      originalPrice: "₹300",
-      discountPrice: "₹180",
+      originalPrice: "Rp300",
+      discountPrice: "Rp180",
       discount: "40% off",
       store: "Fresh Mart",
       latitude: userLocation.latitude ? userLocation.latitude + 0.003 : 0,
@@ -315,55 +320,49 @@ const Catalog = () => {
     }
   ];
 
-  const surpriseBoxes = [
-    {
-      id: 4,
-      name: "Mystery Veggie Box",
-      description: "Surprise selection of fresh vegetables",
-      originalPrice: "₹250",
-      discountPrice: "₹150",
-      discount: "40% off",
-      store: "Farm Direct",
-      badge: "Surprise Box",
-      latitude: userLocation.latitude ? userLocation.latitude + 0.010 : 0,
-      longitude: userLocation.longitude ? userLocation.longitude + 0.002 : 0,
-      image: "/public/images/FoodWaste.jpg"
-    },
-    {
-      id: 5,
-      name: "Bakery Surprise",
-      description: "Random selection of baked goods",
-      originalPrice: "₹180",
-      discountPrice: "₹90",
-      discount: "50% off",
-      store: "Artisan Bakery",
-      badge: "Surprise Box",
-      latitude: userLocation.latitude ? userLocation.latitude + 0.006 : 0,
-      longitude: userLocation.longitude ? userLocation.longitude + 0.009 : 0,
-      image: "/public/images/nearby.jpg"
-    },
-    {
-      id: 6,
-      name: "Pantry Mystery Box",
-      description: "Mix of pantry essentials",
-      originalPrice: "₹400",
-      discountPrice: "₹240",
-      discount: "40% off",
-      store: "Wholesale Hub",
-      badge: "Surprise Box",
-      latitude: userLocation.latitude ? userLocation.latitude + 0.004 : 0,
-      longitude: userLocation.longitude ? userLocation.longitude + 0.006 : 0,
-      image: "/public/images/logo.jpg"
+ 
+  const fetchSurpriseBoxes = async () => {
+    const { data, error } = await supabase.from('katalog').select('*').eq('type', 'surprise');
+    if (error) {
+      console.error('Error fetching surprise boxes:', error.message);
+    } else {
+      setSurpriseBoxes(data);
     }
-  ];
+  };
+
+  const fetchRescuedItems = async () => {
+    const { data, error } = await supabase.from('katalog').select('*').eq('type', 'rescued');
+    if (error) {
+      console.error('Error fetching rescued items:', error.message);
+    } else {
+      setRescuedItems(data);
+    }
+  };
+
+  const fetchAllItems = async () => {
+    const { data, error } = await supabase.from('katalog').select('*');
+    if (error) {
+      console.error('Error fetching all items:', error.message);
+    } else {
+      setAllItems(data);
+    }
+  };
+
+  const handleSeeMore = (type) => {
+    setCurrentView(type);
+  };
+
+  const handleBackToMain = () => {
+    setCurrentView('main');
+  };
 
   const justRescuedItems = [
     {
       id: 7,
       name: "Restaurant Surplus",
       description: "High-quality prepared ingredients",
-      originalPrice: "₹350",
-      discountPrice: "₹175",
+      originalPrice: "Rp350",
+      discountPrice: "Rp175",
       discount: "50% off",
       store: "Fine Dine Restaurant",
       badge: "Just Rescued",
@@ -376,8 +375,8 @@ const Catalog = () => {
       id: 8,
       name: "Organic Produce",
       description: "Slightly imperfect organic vegetables",
-      originalPrice: "₹280",
-      discountPrice: "₹140",
+      originalPrice: "Rp280",
+      discountPrice: "Rp140",
       discount: "50% off",
       store: "Organic Valley",
       badge: "Just Rescued",
@@ -390,8 +389,8 @@ const Catalog = () => {
       id: 9,
       name: "Dairy Products",
       description: "Fresh dairy nearing expiry",
-      originalPrice: "₹200",
-      discountPrice: "₹100",
+      originalPrice: "Rp200",
+      discountPrice: "Rp100",
       discount: "50% off",
       store: "Local Dairy",
       badge: "Just Rescued",
@@ -404,6 +403,9 @@ const Catalog = () => {
 
   useEffect(() => {
     getCurrentLocation();
+    fetchSurpriseBoxes(); 
+    fetchRescuedItems();
+    fetchAllItems();
   }, []);
 
   useEffect(() => {
@@ -493,6 +495,98 @@ const Catalog = () => {
       </div>
     );
   };
+
+  // Render all items page
+  const renderAllItemsPage = (type, title) => {
+    let itemsToShow = [];
+    
+    if (type === 'nearby') {
+      itemsToShow = nearbyProducts;
+    } else if (type === 'surprise') {
+      itemsToShow = allItems.filter(item => item.type === 'surprise').map(item => ({
+        id: item.id,
+        name: item.title,
+        description: item.desc,
+        originalPrice: `Rp${(item.price * 1.5).toFixed(0)}`,
+        discountPrice: `Rp${item.price}`,
+        discount: "33% off",
+        store: "Local Store",
+        badge: "Surprise Box",
+        latitude: userLocation.latitude ? userLocation.latitude + 0.010 : 0,
+        longitude: userLocation.longitude ? userLocation.longitude + 0.002 : 0,
+        image: item.image || "/public/images/FoodWaste.jpg"
+      }));
+    } else if (type === 'rescued') {
+      itemsToShow = allItems.filter(item => item.type === 'rescued').map(item => ({
+        id: item.id,
+        name: item.title,
+        description: item.desc,
+        originalPrice: `Rp${(item.price * 2).toFixed(0)}`,
+        discountPrice: `Rp${item.price}`,
+        discount: "50% off",
+        store: "Rescue Store",
+        badge: "Just Rescued",
+        timeLeft: Math.floor(Math.random() * 5) + 1 + " hours left",
+        latitude: userLocation.latitude ? userLocation.latitude + 0.007 : 0,
+        longitude: userLocation.longitude ? userLocation.longitude + 0.004 : 0,
+        image: item.image || "/public/images/FoodWaste.jpg"
+      }));
+    }
+
+    return (
+      <div className="min-h-screen bg-[#EFE3C2]">
+        <div className="max-w-6xl mx-auto px-4 py-6">
+          {/* Header with back button */}
+          <div className="flex items-center mb-6">
+            <button 
+              onClick={handleBackToMain}
+              className="mr-4 p-2 rounded-full bg-white shadow-md hover:shadow-lg transition-shadow duration-200"
+            >
+              <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">{title}</h1>
+          </div>
+
+          {/* Items grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+            {itemsToShow.map((product, index) => {
+              const calculatedDistance = userLocation.latitude && userLocation.longitude && product.latitude && product.longitude
+                ? calculateDistance(userLocation.latitude, userLocation.longitude, product.latitude, product.longitude)
+                : Infinity;
+
+              return (
+                <ProductCard 
+                  key={product.id || index} 
+                  product={{ ...product, calculatedDistance }} 
+                  showBadge={type !== 'nearby'} 
+                />
+              );
+            })}
+          </div>
+
+          {itemsToShow.length === 0 && (
+            <div className="text-center py-12">
+              <div className="text-gray-400 text-6xl mb-4">📦</div>
+              <h3 className="text-xl font-semibold text-gray-600 mb-2">No items found</h3>
+              <p className="text-gray-500">There are no items available in this category at the moment.</p>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  // Main render function
+  if (currentView !== 'main') {
+    const titles = {
+      'nearby': 'Near Your Location',
+      'surprise': 'All Surprise Boxes',
+      'rescued': 'All Rescued Items'
+    };
+    return renderAllItemsPage(currentView, titles[currentView]);
+  }
 
   return (
     <div className="min-h-screen bg-[#EFE3C2]">
@@ -625,7 +719,10 @@ const Catalog = () => {
                 </div>
               </div>
             </div>
-            <button className="text-green-600 hover:text-green-700 font-medium transition-colors duration-200 text-sm sm:text-base">
+            <button 
+              onClick={() => handleSeeMore('nearby')}
+              className="text-green-600 hover:text-green-700 font-medium transition-colors duration-200 text-sm sm:text-base"
+            >
               See More →
             </button>
           </div>
@@ -783,44 +880,85 @@ const Catalog = () => {
         <div className="mb-6 sm:mb-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg sm:text-xl font-bold text-gray-800">Surprise Box</h2>
-            <button className="text-green-600 hover:text-green-700 font-medium transition-colors duration-200 text-sm sm:text-base">
+            <button 
+              onClick={() => handleSeeMore('surprise')}
+              className="text-green-600 hover:text-green-700 font-medium transition-colors duration-200 text-sm sm:text-base"
+            >
               See More →
             </button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {surpriseBoxes
-              .map(product => ({
-                ...product,
-                calculatedDistance: userLocation.latitude && userLocation.longitude && product.latitude && product.longitude
-                  ? calculateDistance(userLocation.latitude, userLocation.longitude, product.latitude, product.longitude)
-                  : Infinity
-              }))
-              .sort((a, b) => a.calculatedDistance - b.calculatedDistance)
-              .map((product) => (
-                <ProductCard key={product.id} product={product} showBadge={true} />
-              ))}
+            {surpriseBoxes.map((item) => {
+              // Transform katalog data to product format
+              const product = {
+                id: item.id,
+                name: item.title,
+                description: item.desc,
+                originalPrice: `Rp${(item.price * 1.5).toFixed(0)}`,
+                discountPrice: `Rp${item.price}`,
+                discount: "33% off",
+                store: "Local Store",
+                badge: "Surprise Box",
+                latitude: userLocation.latitude ? userLocation.latitude + 0.010 : 0,
+                longitude: userLocation.longitude ? userLocation.longitude + 0.002 : 0,
+                image: item.image || "/public/images/FoodWaste.jpg"
+              };
+
+              const calculatedDistance = userLocation.latitude && userLocation.longitude && product.latitude && product.longitude
+                ? calculateDistance(userLocation.latitude, userLocation.longitude, product.latitude, product.longitude)
+                : Infinity;
+
+              return (
+                <ProductCard 
+                  key={item.id} 
+                  product={{ ...product, calculatedDistance }} 
+                  showBadge={true} 
+                />
+              );
+            })}
           </div>
         </div>
 
         <div className="mb-6 sm:mb-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg sm:text-xl font-bold text-gray-800">Just Rescued!</h2>
-            <button className="text-green-600 hover:text-green-700 font-medium transition-colors duration-200 text-sm sm:text-base">
+            <button 
+              onClick={() => handleSeeMore('rescued')}
+              className="text-green-600 hover:text-green-700 font-medium transition-colors duration-200 text-sm sm:text-base"
+            >
               See More →
             </button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {justRescuedItems
-              .map(product => ({
-                ...product,
-                calculatedDistance: userLocation.latitude && userLocation.longitude && product.latitude && product.longitude
-                  ? calculateDistance(userLocation.latitude, userLocation.longitude, product.latitude, product.longitude)
-                  : Infinity
-              }))
-              .sort((a, b) => a.calculatedDistance - b.calculatedDistance)
-              .map((product) => (
-                <ProductCard key={product.id} product={product} showBadge={true} />
-              ))}
+            {rescuedItems.map((item) => {
+              // Transform katalog data to product format for rescued items
+              const product = {
+                id: item.id,
+                name: item.title,
+                description: item.desc,
+                originalPrice: `Rp${(item.price * 2).toFixed(0)}`,
+                discountPrice: `Rp${item.price}`,
+                discount: "50% off",
+                store: "Rescue Store",
+                badge: "Just Rescued",
+                timeLeft: Math.floor(Math.random() * 5) + 1 + " hours left", // Random time left
+                latitude: userLocation.latitude ? userLocation.latitude + 0.007 : 0,
+                longitude: userLocation.longitude ? userLocation.longitude + 0.004 : 0,
+                image: item.image || "/public/images/FoodWaste.jpg"
+              };
+
+              const calculatedDistance = userLocation.latitude && userLocation.longitude && product.latitude && product.longitude
+                ? calculateDistance(userLocation.latitude, userLocation.longitude, product.latitude, product.longitude)
+                : Infinity;
+
+              return (
+                <ProductCard 
+                  key={item.id} 
+                  product={{ ...product, calculatedDistance }} 
+                  showBadge={true} 
+                />
+              );
+            })}
           </div>
         </div>
       </div>
