@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
+import { supabase } from '../../supabaseClient';
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -25,6 +26,7 @@ const Catalog = () => {
   const [showMapPicker, setShowMapPicker] = useState(false);
   const [mapCenter, setMapCenter] = useState([0, 0]);
   const [selectedMapLocation, setSelectedMapLocation] = useState(null);
+  const [surpriseBoxes, setSurpriseBoxes] = useState([]);
   const searchRef = useRef(null);
   const bannerRef = useRef(null);
 
@@ -315,47 +317,15 @@ const Catalog = () => {
     }
   ];
 
-  const surpriseBoxes = [
-    {
-      id: 4,
-      name: "Mystery Veggie Box",
-      description: "Surprise selection of fresh vegetables",
-      originalPrice: "₹250",
-      discountPrice: "₹150",
-      discount: "40% off",
-      store: "Farm Direct",
-      badge: "Surprise Box",
-      latitude: userLocation.latitude ? userLocation.latitude + 0.010 : 0,
-      longitude: userLocation.longitude ? userLocation.longitude + 0.002 : 0,
-      image: "/public/images/FoodWaste.jpg"
-    },
-    {
-      id: 5,
-      name: "Bakery Surprise",
-      description: "Random selection of baked goods",
-      originalPrice: "₹180",
-      discountPrice: "₹90",
-      discount: "50% off",
-      store: "Artisan Bakery",
-      badge: "Surprise Box",
-      latitude: userLocation.latitude ? userLocation.latitude + 0.006 : 0,
-      longitude: userLocation.longitude ? userLocation.longitude + 0.009 : 0,
-      image: "/public/images/nearby.jpg"
-    },
-    {
-      id: 6,
-      name: "Pantry Mystery Box",
-      description: "Mix of pantry essentials",
-      originalPrice: "₹400",
-      discountPrice: "₹240",
-      discount: "40% off",
-      store: "Wholesale Hub",
-      badge: "Surprise Box",
-      latitude: userLocation.latitude ? userLocation.latitude + 0.004 : 0,
-      longitude: userLocation.longitude ? userLocation.longitude + 0.006 : 0,
-      image: "/public/images/logo.jpg"
+  // Fetch surprise boxes from Supabase (like KatalogManager)
+  const fetchSurpriseBoxes = async () => {
+    const { data, error } = await supabase.from('katalog').select('*');
+    if (error) {
+      console.error('Error fetching surprise boxes:', error.message);
+    } else {
+      setSurpriseBoxes(data);
     }
-  ];
+  };
 
   const justRescuedItems = [
     {
@@ -404,6 +374,7 @@ const Catalog = () => {
 
   useEffect(() => {
     getCurrentLocation();
+    fetchSurpriseBoxes(); // Fetch data like KatalogManager
   }, []);
 
   useEffect(() => {
@@ -788,17 +759,34 @@ const Catalog = () => {
             </button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {surpriseBoxes
-              .map(product => ({
-                ...product,
-                calculatedDistance: userLocation.latitude && userLocation.longitude && product.latitude && product.longitude
-                  ? calculateDistance(userLocation.latitude, userLocation.longitude, product.latitude, product.longitude)
-                  : Infinity
-              }))
-              .sort((a, b) => a.calculatedDistance - b.calculatedDistance)
-              .map((product) => (
-                <ProductCard key={product.id} product={product} showBadge={true} />
-              ))}
+            {surpriseBoxes.map((item) => {
+              // Transform katalog data to product format
+              const product = {
+                id: item.id,
+                name: item.title,
+                description: item.desc,
+                originalPrice: `₹${(item.price * 1.5).toFixed(0)}`,
+                discountPrice: `₹${item.price}`,
+                discount: "33% off",
+                store: "Local Store",
+                badge: "Surprise Box",
+                latitude: userLocation.latitude ? userLocation.latitude + 0.010 : 0,
+                longitude: userLocation.longitude ? userLocation.longitude + 0.002 : 0,
+                image: item.image || "/public/images/FoodWaste.jpg"
+              };
+
+              const calculatedDistance = userLocation.latitude && userLocation.longitude && product.latitude && product.longitude
+                ? calculateDistance(userLocation.latitude, userLocation.longitude, product.latitude, product.longitude)
+                : Infinity;
+
+              return (
+                <ProductCard 
+                  key={item.id} 
+                  product={{ ...product, calculatedDistance }} 
+                  showBadge={true} 
+                />
+              );
+            })}
           </div>
         </div>
 
