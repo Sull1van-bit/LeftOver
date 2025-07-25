@@ -4,16 +4,16 @@ import KatalogManager from '../../components/KatalogManager';
 
 const Home = () => {
   const featuredProducts = [
-    { id: 1, name: 'Warung Surplus', price: 275000, image: 'https://placehold.co/300x300/3E7B27/EFE3C2?text=Warung+Surplus', description: 'Assorted leftover dishes from local warungs in Jakarta. Perfect for catering small events.' },
-    { id: 2, name: 'Roti Bundle', price: 125000, image: 'https://placehold.co/300x300/3E7B27/EFE3C2?text=Roti+Bundle', description: 'Day-old pastries, bread and kue from top bakeries in Bandung. Great for coffee shops.' },
-    { id: 3, name: 'Pasar Fresh Box', price: 200000, image: 'https://placehold.co/300x300/3E7B27/EFE3C2?text=Pasar+Box', description: 'Assorted vegetables and fruits from Pasar Baru that are still fresh but didn\'t meet retail standards.' },
-    { id: 4, name: 'Dairy Products', price: 175000, image: 'https://placehold.co/300x300/3E7B27/EFE3C2?text=Dairy+Products', description: 'Collection of near-expiry dairy products from Indonesian suppliers including milk, cheese, and yogurt.' },
+    { id: 1, name: 'Warung Surplus', price: 275000, image: '../../../public/images/warung.png', description: 'Assorted leftover dishes from local warungs in Jakarta. Perfect for catering small events.' },
+    { id: 2, name: 'Roti Bundle', price: 125000, image: '../../../public/images/Bread.jpg', description: 'Day-old pastries, bread and kue from top bakeries in Bandung. Great for coffee shops.' },
+    { id: 3, name: 'Pasar Fresh Box', price: 200000, image: '../../../public/images/basket-full-vegetables.jpg', description: 'Assorted vegetables and fruits from Pasar Baru that are still fresh but didn\'t meet retail standards.' },
+    { id: 4, name: 'Dairy Products', price: 175000, image: '../../../public/images/Cheese.png', description: 'Collection of near-expiry dairy products from Indonesian suppliers including milk, cheese, and yogurt.' },
   ];
 
   const categories = [
-    { id: 1, name: 'Just Rescued', info: 'Recently saved', image: '/images/nearby.jpg' },
-    { id: 2, name: 'Surprise Box', info: 'Recently saved', image: '' },
-    { id: 3, name: 'Pick and Choose', info: 'Get your favourites', image: 'https://placehold.co/400x200/3E7B27/EFE3C2?text=Pasar+Grocers' },
+    { id: 1, name: 'Just Rescued', info: 'Recently saved', image: '/images/map.png' },
+    { id: 2, name: 'Surprise Box', info: 'Mystery bag of great food at a low price', image: '/images/open-box.png  ' },
+    { id: 3, name: 'Pick and Choose', info: 'See and select the exact items you get ', image: '/images/shopping.png' },
   ];
 
   const [showKatalog, setShowKatalog] = useState(false);

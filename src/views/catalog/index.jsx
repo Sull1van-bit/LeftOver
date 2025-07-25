@@ -56,22 +56,21 @@ const Catalog = () => {
       id: 1,
       title: "Best Deal This Week",
       subtitle: "Up to 50% off on rescued food items",
-      image: "/public/images/FoodWaste.jpg",
-      color: "from-green-400 to-green-600"
+      image: "/images/foodbanner.jpg",
     },
     {
       id: 2,
       title: "Fresh Produce Alert",
       subtitle: "Farm fresh vegetables at discounted prices",
-      image: "/public/images/nearby.jpg",
-      color: "from-orange-400 to-orange-600"
+      image: "/images/fruit.jpg",
+
     },
     {
       id: 3,
       title: "Bakery Special",
       subtitle: "Day-old bread and pastries - 70% off",
-      image: "/public/images/logo.jpg",
-      color: "from-blue-400 to-blue-600"
+      image: "/images/roti.jpg",
+   
     }
   ];
 
@@ -598,13 +597,23 @@ const Catalog = () => {
           {banners.map((banner, index) => (
             <div 
               key={banner.id}
-              className={`min-w-full h-full bg-gradient-to-r ${banner.color} flex items-center justify-center relative`}
+              className="min-w-full h-full flex items-center justify-center relative"
+              style={{
+                backgroundImage: `url(${banner.image})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat'
+              }}
             >
-              <div className="text-center text-white z-10 px-4">
-                <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-2">{banner.title}</h2>
-                <p className="text-sm sm:text-lg md:text-xl opacity-90">{banner.subtitle}</p>
+              {/* Gradient overlay untuk kontras text */}
+              <div className={`absolute inset-0 bg-gradient-to-r ${banner.color} opacity-60`}></div>
+              {/* Dark overlay untuk readability text */}
+              <div className="absolute inset-0"></div>
+              
+              <div className="text-center text-white z-10 px-4 relative">
+                <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-2 drop-shadow-lg">{banner.title}</h2>
+                <p className="text-sm sm:text-lg md:text-xl opacity-90 drop-shadow-md">{banner.subtitle}</p>
               </div>
-              <div className="absolute inset-0 bg-black bg-opacity-30"></div>
             </div>
           ))}
         </div>
@@ -888,7 +897,7 @@ const Catalog = () => {
             </button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {surpriseBoxes.map((item) => {
+            {surpriseBoxes.slice(0,3).map((item) => {
               // Transform katalog data to product format
               const product = {
                 id: item.id,
@@ -930,8 +939,7 @@ const Catalog = () => {
             </button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {rescuedItems.map((item) => {
-              // Transform katalog data to product format for rescued items
+            {rescuedItems.slice(0,3).map((item) => {
               const product = {
                 id: item.id,
                 name: item.title,
