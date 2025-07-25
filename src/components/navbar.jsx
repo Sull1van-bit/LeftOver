@@ -14,8 +14,7 @@ const Navbar = ({
   const [showSignUpForm, setShowSignUpForm] = useState(false);
   const [loginData, setLoginData] = useState({ email: '', password: '' });
   const [signUpData, setSignUpData] = useState({ 
-    firstName: '', 
-    lastName: '', 
+    displayName: '',
     email: '', 
     password: '' 
   });
@@ -50,7 +49,7 @@ const Navbar = ({
     if (result?.success) {
       setIsUserMenuOpen(false);
       setShowSignUpForm(false);
-      setSignUpData({ firstName: '', lastName: '', email: '', password: '' });
+      setSignUpData({ displayName: '', email: '', password: '' });
     }
   };
 
@@ -62,7 +61,7 @@ const Navbar = ({
   const handleSignUpSubmit = (e) => {
     e.preventDefault();
     const userData = {
-      name: `${signUpData.firstName} ${signUpData.lastName}`,
+      name: signUpData.displayName,
       email: signUpData.email,
       password: signUpData.password
     };
@@ -73,7 +72,7 @@ const Navbar = ({
     setShowLoginForm(false);
     setShowSignUpForm(false);
     setLoginData({ email: '', password: '' });
-    setSignUpData({ firstName: '', lastName: '', email: '', password: '' });
+    setSignUpData({ displayName: '', email: '', password: '' });
   };
 
   const handleLogout = () => {
@@ -241,29 +240,16 @@ const Navbar = ({
                             <p className="text-sm text-gray-600">Join us today! Please fill in your details</p>
                           </div>
                           <form onSubmit={handleSignUpSubmit} className="space-y-4">
-                            <div className="grid grid-cols-2 gap-3">
-                              <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
-                                <input
-                                  type="text"
-                                  required
-                                  value={signUpData.firstName}
-                                  onChange={(e) => setSignUpData({...signUpData, firstName: e.target.value})}
-                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85A947] focus:border-transparent"
-                                  placeholder="First name"
-                                />
-                              </div>
-                              <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
-                                <input
-                                  type="text"
-                                  required
-                                  value={signUpData.lastName}
-                                  onChange={(e) => setSignUpData({...signUpData, lastName: e.target.value})}
-                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85A947] focus:border-transparent"
-                                  placeholder="Last name"
-                                />
-                              </div>
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-2">Display Name</label>
+                              <input
+                                type="text"
+                                required
+                                value={signUpData.displayName}
+                                onChange={(e) => setSignUpData({...signUpData, displayName: e.target.value})}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85A947] focus:border-transparent"
+                                placeholder="Enter your display name"
+                              />
                             </div>
                             <div>
                               <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>

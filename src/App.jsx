@@ -10,14 +10,15 @@ import './App.css';
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState({
-    name: 'John Doe',
-    points: 1250,
+    name: '',
+    points: 0,
     profilePicture: null
   });
   const [currentView, setCurrentView] = useState('home');
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [displayName, setDisplayName] = useState("");
 
   useEffect(() => {
     const checkExistingSession = async () => {
@@ -25,8 +26,8 @@ function App() {
       if (session) {
         setIsLoggedIn(true);
         setUserData({
-          name: session.user.email,
-          points: 1250,
+          name: session.user.user_metadata?.display_name || session.user.email,
+          points: session.user.user_metadata?.points || 0,
           profilePicture: null,
           email: session.user.email
         });
@@ -39,8 +40,8 @@ function App() {
       if (session) {
         setIsLoggedIn(true);
         setUserData({
-          name: session.user.email,
-          points: 1250,
+          name: session.user.user_metadata?.display_name || session.user.email,
+          points: session.user.user_metadata?.points || 0,
           profilePicture: null,
           email: session.user.email
         });
@@ -93,6 +94,12 @@ function App() {
       const { data, error } = await supabase.auth.signUp({
         email: userData.email,
         password: userData.password,
+        options: {
+          data: {
+            display_name: userData.name,
+            points: 0,
+          }
+        }
       });
 
       if (error) {
