@@ -1,5 +1,6 @@
 
-import React from 'react';
+import React, { useState } from 'react';
+import KatalogManager from '../../components/KatalogManager';
 
 const Home = () => {
   const featuredProducts = [
@@ -14,6 +15,8 @@ const Home = () => {
     { id: 2, name: 'Our Top Picks', image: '' },
     { id: 3, name: 'Just Rescued!', image: 'https://placehold.co/400x200/3E7B27/EFE3C2?text=Pasar+Grocers' },
   ];
+
+  const [showKatalog, setShowKatalog] = useState(false);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -142,6 +145,16 @@ const Home = () => {
           ))}
         </div>
       </section>
+      {/* Button to toggle KatalogManager */}
+      <div className="flex justify-center my-8">
+        <button
+          className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
+          onClick={() => setShowKatalog(prev => !prev)}
+        >
+          {showKatalog ? 'Hide' : 'Show'} Katalog Manager
+        </button>
+      </div>
+      {showKatalog && <KatalogManager />}
     </div>
   );
 };
