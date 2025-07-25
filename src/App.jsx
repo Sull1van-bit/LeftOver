@@ -34,6 +34,10 @@ const ICONS = {
   arrowRight: "M10 17l5-5-5-5v10z",
   checkCircle: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z",
   shipping: "M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9l1.96 2.5H17V9.5h2.5zM18 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z",
+  shieldCheck: "M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1.05 16.54l-3.54-3.54 1.41-1.41 2.12 2.12 4.24-4.24 1.41 1.41-5.65 5.66z",
+  dollarSign: "M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-.9.6-1.75 2.1-1.75 1.3 0 2 .6 2 1.7H15c0-1.65-1.35-3-3.5-3S8 6.35 8 8.25c0 2.35 2.25 3.1 4.2 3.55 2.5.55 3.3 1.2 3.3 2.25 0 1.15-.8 1.85-2.3 1.85-1.5 0-2.3-.75-2.3-1.8H8.2c0 1.95 1.35 3.25 3.8 3.25s4-1.3 4-3.5c0-2.1-2.05-2.8-4.2-3.3z",
+  package: "M12 2L4 6v12l8 4 8-4V6l-8-4zm0 2.33L17.17 8 12 10.33 6.83 8 12 4.33zM6 17.67V9.33l5 2.5v7.42l-5-2.58zM18 17.67l-5 2.58v-7.42l5-2.5v8.34z",
+  target: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v2h-2zm0 4h2v2h-2zm-4-2h2v2H7zm8 0h2v2h-2z",
 };
 
 // --- UTILITY FUNCTIONS ---
@@ -256,35 +260,120 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, message }) => (
         </div>
     </Modal>
 );
+
 const DiscountModal = ({ isOpen, onClose, onApply, product }) => {
-    const [discount, setDiscount] = useState(product?.discountPrice || '');
+    const [discountType, setDiscountType] = useState('price'); // 'price' or 'percent'
+    const [discountValue, setDiscountValue] = useState('');
+    const [finalPrice, setFinalPrice] = useState(product?.discountPrice || null);
+    const [error, setError] = useState('');
+
+    useEffect(() => {
+        if (product) {
+            if (product.discountPrice) {
+                setDiscountType('price');
+                setDiscountValue(product.discountPrice);
+                setFinalPrice(product.discountPrice);
+            } else {
+                setDiscountType('price');
+                setDiscountValue('');
+                setFinalPrice(product.price);
+            }
+            setError('');
+        }
+    }, [product]);
+
+    useEffect(() => {
+        if (!product) return;
+
+        const value = parseFloat(discountValue);
+        let newFinalPrice = product.price;
+        setError('');
+
+        if (isNaN(value) || value < 0) {
+            newFinalPrice = null; // No discount
+        } else if (discountType === 'price') {
+            if (value >= product.price) {
+                setError('Discount price must be less than the original price.');
+                newFinalPrice = product.price;
+            } else {
+                newFinalPrice = value;
+            }
+        } else if (discountType === 'percent') {
+            if (value > 100) {
+                 setError('Discount percentage cannot exceed 100%.');
+                 newFinalPrice = product.price;
+            } else {
+                newFinalPrice = product.price * (1 - value / 100);
+            }
+        }
+        setFinalPrice(newFinalPrice);
+
+    }, [discountValue, discountType, product]);
+    
     const handleApply = () => {
-        onApply(product.id, discount ? Number(discount) : null);
+        if (error) return;
+        onApply(product.id, finalPrice);
         onClose();
     };
+    
+    const handleRemoveDiscount = () => {
+        onApply(product.id, null);
+        onClose();
+    };
+
+    if (!product) return null;
+
     return (
         <Modal isOpen={isOpen} onClose={onClose} size="max-w-md">
             <div className="p-6">
                 <h2 className="text-2xl font-bold text-[#123524]">Set Discount</h2>
-                <p className="text-gray-600 mb-4">For product: <span className="font-semibold">{product?.name}</span></p>
-                <div className="space-y-4">
-                        <label className="block">
-                            <span className="text-gray-700 font-semibold">Original Price</span>
-                            <input type="text" value={`Rp ${product?.price.toLocaleString('id-ID')}`} disabled className="mt-1 block w-full rounded-md bg-gray-200 border-gray-300 shadow-sm text-gray-500" />
-                        </label>
-                        <label className="block">
-                            <span className="text-gray-700 font-semibold">Discount Price</span>
-                            <input type="number" value={discount} onChange={e => setDiscount(e.target.value)} placeholder="Contoh: 120000" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#3E7B27] focus:ring focus:ring-[#3E7B27] focus:ring-opacity-50 text-gray-900" />
-                        </label>
+                <p className="text-gray-600 mb-1">For: <span className="font-semibold">{product.name}</span></p>
+                <p className="text-sm text-gray-500 mb-6">Original Price: <span className="font-semibold">Rp {product.price.toLocaleString('id-ID')}</span></p>
+
+                <div className="flex border border-gray-300 rounded-lg p-1 bg-gray-100 mb-4">
+                    <button onClick={() => setDiscountType('price')} className={`w-1/2 py-2 text-sm font-semibold rounded-md transition-colors ${discountType === 'price' ? 'bg-white text-[#123524] shadow' : 'text-gray-600'}`}>Discount Price</button>
+                    <button onClick={() => setDiscountType('percent')} className={`w-1/2 py-2 text-sm font-semibold rounded-md transition-colors ${discountType === 'percent' ? 'bg-white text-[#123524] shadow' : 'text-gray-600'}`}>Percentage</button>
+                </div>
+
+                <div>
+                    {discountType === 'price' ? (
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">Discount Price (Rp)</label>
+                            <div className="relative mt-1">
+                                <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">Rp</span>
+                                <input type="number" value={discountValue} onChange={e => setDiscountValue(e.target.value)} placeholder="e.g., 120000" className="pl-8 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#3E7B27] focus:ring focus:ring-[#3E7B27] focus:ring-opacity-50 text-gray-900" />
+                            </div>
+                        </div>
+                    ) : (
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">Discount Percentage (%)</label>
+                             <div className="relative mt-1">
+                                <input type="number" value={discountValue} onChange={e => setDiscountValue(e.target.value)} placeholder="e.g., 20" className="pr-6 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#3E7B27] focus:ring focus:ring-[#3E7B27] focus:ring-opacity-50 text-gray-900" />
+                                <span className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500">%</span>
+                            </div>
+                        </div>
+                    )}
+                    {error && <p className="text-red-600 text-sm mt-2">{error}</p>}
+                </div>
+                
+                <div className="mt-6 p-4 bg-green-50 rounded-lg text-center">
+                    <p className="text-sm text-green-800">Final Price After Discount</p>
+                    <p className="text-2xl font-bold text-green-900">
+                        {finalPrice !== null ? `Rp ${Math.round(finalPrice).toLocaleString('id-ID')}` : `Rp ${product.price.toLocaleString('id-ID')}`}
+                    </p>
                 </div>
             </div>
-            <div className="flex justify-end gap-4 p-6 mt-4 bg-gray-50 rounded-b-2xl">
-                <button onClick={onClose} className="px-6 py-2 rounded-md font-semibold text-gray-700 bg-gray-200 hover:bg-gray-300 transition-colors">Cancel</button>
-                <button onClick={handleApply} className="px-6 py-2 rounded-md font-semibold text-[#123524] bg-[#85A947] hover:bg-[#a0c45e] transition-colors shadow-sm hover:shadow-lg">Apply Discount</button>
+            <div className="flex justify-between items-center gap-4 p-6 mt-2 bg-gray-50 rounded-b-2xl">
+                <button onClick={handleRemoveDiscount} className="px-4 py-2 rounded-md font-semibold text-sm text-red-700 hover:bg-red-100 transition-colors">Remove Discount</button>
+                <div className="flex gap-2">
+                    <button onClick={onClose} className="px-6 py-2 rounded-md font-semibold text-gray-700 bg-gray-200 hover:bg-gray-300 transition-colors">Cancel</button>
+                    <button onClick={handleApply} disabled={!!error} className="px-6 py-2 rounded-md font-semibold text-[#123524] bg-[#85A947] hover:bg-[#a0c45e] transition-colors shadow-sm hover:shadow-lg disabled:bg-gray-300 disabled:cursor-not-allowed">Apply</button>
+                </div>
             </div>
         </Modal>
     );
 };
+
 
 // --- [MODIFIED] DateRangePicker as Dropdown ---
 const DateRangePicker = ({ selectedRange, onRangeChange }) => {
@@ -524,12 +613,12 @@ const HomepageView = ({ data, onAddProductClick, onAddPromotionClick }) => {
                    colors={salesAnalysisColors}
                  />
                  <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mt-4 pt-4 border-t">
-                       {salesAnalysisMetrics.map((metric, i) => (
-                           <span key={metric.key} className="flex items-center text-sm text-gray-600">
-                               <span className="w-3 h-3 rounded-full mr-2" style={{backgroundColor: salesAnalysisColors[i]}}></span>
-                               {metric.name}
-                           </span>
-                       ))}
+                           {salesAnalysisMetrics.map((metric, i) => (
+                               <span key={metric.key} className="flex items-center text-sm text-gray-600">
+                                   <span className="w-3 h-3 rounded-full mr-2" style={{backgroundColor: salesAnalysisColors[i]}}></span>
+                                   {metric.name}
+                               </span>
+                           ))}
                  </div>
             </div>
         </div>
@@ -825,6 +914,11 @@ const DataCompassView = ({ data, allProducts }) => {
     });
     const [productPerformanceData, setProductPerformanceData] = useState(allProducts);
     
+    // State for Deadstock Prevention feature
+    const [selectedDeadstockProductId, setSelectedDeadstockProductId] = useState('');
+    const [deadstockInput, setDeadstockInput] = useState('');
+    const [deadstockAnalysisResult, setDeadstockAnalysisResult] = useState(null);
+    
     const displayedKpis = data.dataCompass.kpi[dateRange] || data.dataCompass.kpi['Last 7 Days'];
     const currentMarketingImpact = data.dataCompass.marketingImpact[dateRange] || data.dataCompass.marketingImpact['Last 7 Days'];
 
@@ -843,9 +937,69 @@ const DataCompassView = ({ data, allProducts }) => {
             views: Math.floor(Math.random() * (p.views || 50) * (days / 7)) + Math.floor((p.views || 50)),
         }));
         setProductPerformanceData(updatedProductData);
+        // Reset deadstock analysis when range changes
+        setDeadstockAnalysisResult(null);
+        setSelectedDeadstockProductId('');
+        setDeadstockInput('');
 
     }, [dateRange, allProducts]);
     
+    // [MODIFIED] Enhanced deadstock calculation with full analysis
+    const handleDeadstockCalculation = () => {
+        if (!selectedDeadstockProductId || deadstockInput.trim() === '' || isNaN(deadstockInput)) return;
+
+        const product = productPerformanceData.find(p => p.id.toString() === selectedDeadstockProductId);
+        if (!product) return;
+
+        const days = getDaysFromRange(dateRange);
+        const deadstockQuantity = parseInt(deadstockInput, 10);
+        const salesVelocity = product.sales / days; // sales per day
+
+        // --- Margin of Error Calculation (for console log) ---
+        // Simulate demand variability. In a real app, this would be based on historical sales standard deviation.
+        const demandVariability = 0.15; // Assume a 15% variability for this simulation
+        const marginOfError = Math.ceil(product.sales * demandVariability);
+        console.log(`Optimization Analysis for "${product.name}" (Period: ${dateRange})`);
+        console.log(`- Base sales: ${product.sales}`);
+        console.log(`- Calculated Margin of Error (±): ${marginOfError} units`);
+        // --- End of Margin of Error ---
+
+        const baseRecommendation = Math.ceil(product.sales * 1.05); // Recommend 5% more than sales
+        const recommendationRange = {
+            min: baseRecommendation - marginOfError > 0 ? baseRecommendation - marginOfError : Math.ceil(baseRecommendation * 0.5),
+            max: baseRecommendation + marginOfError
+        };
+
+        const deadstockCost = deadstockQuantity * product.price;
+        const potentialRevenue = product.sales * product.price;
+        
+        // Generate dynamic insights based on performance
+        let insights = [];
+        if (salesVelocity > 2 && deadstockQuantity === 0) {
+            insights.push({ text: "Strong Performer: This product sells quickly. Consider increasing stock to avoid stockouts and meet high demand.", icon: ICONS.trendingUp, color: 'green' });
+        } else if (salesVelocity < 0.5 && deadstockQuantity > product.sales) {
+            insights.push({ text: "Slow-Mover Alert: High deadstock and low sales velocity. A flash sale or bundling with a popular item could help clear inventory.", icon: ICONS.trendingDown, color: 'red' });
+        } else {
+            insights.push({ text: "Balanced Performance: Sales are steady. The recommended production quantity aims to match demand while minimizing waste.", icon: ICONS.checkCircle, color: 'blue' });
+        }
+        if (deadstockCost > 0) {
+           insights.push({ text: `The ${deadstockQuantity} unsold units represent a loss of Rp ${deadstockCost.toLocaleString('id-ID')}. Optimizing stock can recover this cost.`, icon: ICONS.dollarSign, color: 'orange' });
+        }
+
+
+        setDeadstockAnalysisResult({
+            productName: product.name,
+            sales: product.sales,
+            days: days,
+            velocity: salesVelocity.toFixed(2),
+            deadstock: deadstockQuantity,
+            deadstockCost: deadstockCost,
+            potentialRevenue: potentialRevenue,
+            recommendationRange: recommendationRange,
+            insights: insights,
+        });
+    };
+
     const KPICard = ({ item, className = '' }) => (
         <Card className={`p-4 flex flex-col h-full ${className}`}>
             <h3 className="text-sm font-medium text-gray-500">{item.name}</h3>
@@ -933,6 +1087,75 @@ const DataCompassView = ({ data, allProducts }) => {
                             </div>
                         </div>
                 );
+            // [MODIFIED] Revamped Optimization UI and logic
+            case 'Optimization':
+                return (
+                    <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
+                        {/* --- Input Column --- */}
+                        <div className="lg:col-span-2 space-y-6">
+                            <Card className="p-6">
+                                <h2 className="text-xl font-bold text-gray-800 mb-1">Inventory Optimizer</h2>
+                                <p className="text-sm text-gray-500 mb-6">Analyze unsold products to refine future production.</p>
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700">1. Select Product to Analyze</label>
+                                        <select value={selectedDeadstockProductId} onChange={e => setSelectedDeadstockProductId(e.target.value)} className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-[#3E7B27] focus:border-[#3E7B27] sm:text-sm rounded-md text-gray-900">
+                                            <option value="">-- Choose a product --</option>
+                                            {productPerformanceData.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700">2. Enter Unsold Units (Deadstock)</label>
+                                        <input type="number" value={deadstockInput} onChange={e => setDeadstockInput(e.target.value)} placeholder="e.g., 15" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#3E7B27] focus:ring focus:ring-[#3E7B27] focus:ring-opacity-50 text-gray-900" />
+                                    </div>
+                                    <button onClick={handleDeadstockCalculation} disabled={!selectedDeadstockProductId || deadstockInput.trim() === ''} className="w-full px-6 py-3 rounded-md font-semibold text-white bg-[#3E7B27] hover:bg-[#123524] transition-colors shadow-sm hover:shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                                        <Icon path={ICONS.lightbulb} className="w-5 h-5" />
+                                        Generate Analysis
+                                    </button>
+                                </div>
+                            </Card>
+                        </div>
+                        {/* --- Analysis Column --- */}
+                        <div className="lg:col-span-3">
+                            {deadstockAnalysisResult ? (
+                                <Card className="p-6 bg-green-50 border border-green-200 shadow-lg">
+                                    <h3 className="text-xl font-bold text-green-900">Analysis for "{deadstockAnalysisResult.productName}"</h3>
+                                    <p className="text-sm text-gray-600 mb-4">Based on performance in the {dateRange}.</p>
+                                    
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                                        <div className="bg-white p-4 rounded-lg text-center shadow-sm"><p className="text-sm text-gray-500">Sales Velocity</p><p className="text-2xl font-bold text-gray-800">{deadstockAnalysisResult.velocity}<span className="text-sm font-normal">/day</span></p></div>
+                                        <div className="bg-white p-4 rounded-lg text-center shadow-sm"><p className="text-sm text-gray-500">Deadstock Cost</p><p className="text-2xl font-bold text-red-600">Rp {deadstockAnalysisResult.deadstockCost.toLocaleString('id-ID')}</p></div>
+                                        <div className="bg-white p-4 rounded-lg text-center shadow-sm"><p className="text-sm text-gray-500">Actual Revenue</p><p className="text-2xl font-bold text-green-700">Rp {deadstockAnalysisResult.potentialRevenue.toLocaleString('id-ID')}</p></div>
+                                    </div>
+
+                                    <div className="bg-white rounded-xl p-6 mb-6 text-center shadow-md">
+                                        <p className="text-md font-semibold text-gray-700">Recommended Production for Next Period</p>
+                                        <p className="text-5xl font-extrabold text-[#123524] my-2">{deadstockAnalysisResult.recommendationRange.min} - {deadstockAnalysisResult.recommendationRange.max}</p>
+                                        <p className="text-sm text-gray-500">This range balances maximizing sales with minimizing waste, based on sales velocity and demand variability.</p>
+                                    </div>
+                                    
+                                    <div>
+                                        <h4 className="font-semibold text-gray-800 mb-3">Actionable Insights</h4>
+                                        <ul className="space-y-3">
+                                            {deadstockAnalysisResult.insights.map((insight, index) => (
+                                                <li key={index} className="flex items-start gap-3 p-3 bg-white/70 rounded-lg">
+                                                    <Icon path={insight.icon} className={`w-6 h-6 text-${insight.color}-500 flex-shrink-0 mt-1`} />
+                                                    <p className="text-sm text-gray-700">{insight.text}</p>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </Card>
+                            ) : (
+                                <Card className="p-12 text-center text-gray-500 border-2 border-dashed">
+                                    <Icon path={ICONS.search} className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+                                    <h3 className="text-lg font-semibold text-gray-600">Awaiting Analysis</h3>
+                                    <p className="mt-1">Select a product and enter your unsold units to generate a detailed inventory optimization plan.</p>
+                                </Card>
+                            )}
+                        </div>
+                    </div>
+                );
             case 'Overview':
             default:
                 const overviewMetrics = [
@@ -978,42 +1201,42 @@ const DataCompassView = ({ data, allProducts }) => {
             <div className="space-y-4 pt-6">
                  <h2 className="text-xl font-bold text-gray-800">Marketing Impact Analysis ({dateRange})</h2>
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <Card className="p-6 bg-green-50 border border-green-200">
-                         <h3 className="font-bold text-lg text-green-800 mb-2">With Marketing</h3>
-                         <div className="space-y-2">
-                             <div>
-                                 <p className="text-sm text-gray-500">Revenue (GMV)</p>
-                                 <p className="text-2xl font-bold text-green-900">{currentMarketingImpact.withMarketing.revenue}</p>
-                             </div>
-                              <div>
-                                 <p className="text-sm text-gray-500">Orders</p>
-                                 <p className="text-2xl font-bold text-green-900">{currentMarketingImpact.withMarketing.orders}</p>
-                             </div>
-                              <div>
-                                 <p className="text-sm text-gray-500">Conversion Rate</p>
-                                 <p className="text-2xl font-bold text-green-900">{currentMarketingImpact.withMarketing.conversion}</p>
-                             </div>
-                         </div>
-                         <p className="text-xs text-gray-500 mt-4">{currentMarketingImpact.withMarketing.note}</p>
-                      </Card>
-                       <Card className="p-6 bg-gray-50 border">
-                         <h3 className="font-bold text-lg text-gray-700 mb-2">Without Marketing (Est.)</h3>
-                          <div className="space-y-2">
-                             <div>
-                                 <p className="text-sm text-gray-500">Revenue (GMV)</p>
-                                 <p className="text-2xl font-bold text-gray-800">{currentMarketingImpact.withoutMarketing.revenue}</p>
-                             </div>
-                              <div>
-                                 <p className="text-sm text-gray-500">Orders</p>
-                                 <p className="text-2xl font-bold text-gray-800">{currentMarketingImpact.withoutMarketing.orders}</p>
-                             </div>
-                              <div>
-                                 <p className="text-sm text-gray-500">Conversion Rate</p>
-                                 <p className="text-2xl font-bold text-gray-800">{currentMarketingImpact.withoutMarketing.conversion}</p>
-                             </div>
-                         </div>
-                         <p className="text-xs text-gray-500 mt-4">{currentMarketingImpact.withoutMarketing.note}</p>
-                      </Card>
+                          <Card className="p-6 bg-green-50 border border-green-200">
+                           <h3 className="font-bold text-lg text-green-800 mb-2">With Marketing</h3>
+                           <div className="space-y-2">
+                               <div>
+                                   <p className="text-sm text-gray-500">Revenue (GMV)</p>
+                                   <p className="text-2xl font-bold text-green-900">{currentMarketingImpact.withMarketing.revenue}</p>
+                               </div>
+                               <div>
+                                   <p className="text-sm text-gray-500">Orders</p>
+                                   <p className="text-2xl font-bold text-green-900">{currentMarketingImpact.withMarketing.orders}</p>
+                               </div>
+                               <div>
+                                   <p className="text-sm text-gray-500">Conversion Rate</p>
+                                   <p className="text-2xl font-bold text-green-900">{currentMarketingImpact.withMarketing.conversion}</p>
+                               </div>
+                           </div>
+                           <p className="text-xs text-gray-500 mt-4">{currentMarketingImpact.withMarketing.note}</p>
+                          </Card>
+                           <Card className="p-6 bg-gray-50 border">
+                             <h3 className="font-bold text-lg text-gray-700 mb-2">Without Marketing (Est.)</h3>
+                               <div className="space-y-2">
+                                   <div>
+                                       <p className="text-sm text-gray-500">Revenue (GMV)</p>
+                                       <p className="text-2xl font-bold text-gray-800">{currentMarketingImpact.withoutMarketing.revenue}</p>
+                                   </div>
+                                   <div>
+                                       <p className="text-sm text-gray-500">Orders</p>
+                                       <p className="text-2xl font-bold text-gray-800">{currentMarketingImpact.withoutMarketing.orders}</p>
+                                   </div>
+                                   <div>
+                                       <p className="text-sm text-gray-500">Conversion Rate</p>
+                                       <p className="text-2xl font-bold text-gray-800">{currentMarketingImpact.withoutMarketing.conversion}</p>
+                                   </div>
+                               </div>
+                             <p className="text-xs text-gray-500 mt-4">{currentMarketingImpact.withoutMarketing.note}</p>
+                           </Card>
                  </div>
             </div>
             
@@ -1022,6 +1245,7 @@ const DataCompassView = ({ data, allProducts }) => {
                     <button onClick={() => setActiveTab('Overview')} className={`py-3 px-1 border-b-2 font-semibold text-sm ${activeTab === 'Overview' ? 'border-[#123524] text-[#123524]' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}>Overview</button>
                     <button onClick={() => setActiveTab('Traffic')} className={`py-3 px-1 border-b-2 font-semibold text-sm ${activeTab === 'Traffic' ? 'border-[#123524] text-[#123524]' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}>Traffic</button>
                     <button onClick={() => setActiveTab('Product Performance')} className={`py-3 px-1 border-b-2 font-semibold text-sm ${activeTab === 'Product Performance' ? 'border-[#123524] text-[#123524]' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}>Product Performance</button>
+                    <button onClick={() => setActiveTab('Optimization')} className={`py-3 px-1 border-b-2 font-semibold text-sm ${activeTab === 'Optimization' ? 'border-[#123524] text-[#123524]' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}>Optimization</button>
                 </nav>
             </div>
             
@@ -1282,7 +1506,7 @@ const OrderDetailView = ({ order, onClose }) => {
                                     <p className="text-sm text-gray-500">Shipping label has not been generated.</p>
                                 )}
                             </div>
-                             <div>
+                            <div>
                                 <h3 className="font-semibold text-gray-800 mb-2">Product Summary ({order.items} item)</h3>
                                 <div className="flow-root bg-white border rounded-lg p-4">
                                     <ul role="list" className="-my-4 divide-y divide-gray-200">
@@ -1469,7 +1693,7 @@ const Sidebar = ({ activeMenu, setActiveMenu, setView }) => {
 
     return (
         <div className="w-20 lg:w-64 bg-[#123524] text-white flex flex-col transition-all duration-300 shadow-lg flex-shrink-0">
-            <div className="flex items-center justify-center lg:justify-start lg:pl-6 h-20 border-b border-white/10"><Icon path={ICONS.home} className="h-8 w-8 text-[#85A947]" /><span className="hidden lg:block ml-3 text-xl font-bold text-white">FoodSave</span></div>
+            <div className="flex items-center justify-center lg:justify-start lg:pl-6 h-20 border-b border-white/10"><Icon path={ICONS.home} className="h-8 w-8 text-[#85A947]" /><span className="hidden lg:block ml-3 text-xl font-bold text-white">LeftOver</span></div>
             <nav className="flex-1 px-2 lg:px-4 py-4 space-y-1">
                 {menuItems.map(item => (
                     <div key={item.id}>
@@ -1632,7 +1856,7 @@ const DashboardLayout = ({ data, setData, setView, setEditingProduct, setEditing
 };
 
 // --- Auth Pages ---
-const AuthLayout = ({ children }) => (<div className="min-h-screen w-full flex items-center justify-center bg-[#EFE3C2] p-4"><div className="w-full max-w-md p-8 space-y-8 bg-white rounded-2xl shadow-lg"><div className="text-center"><h1 className="text-3xl font-bold text-[#123524]">Welcome to FoodSave</h1><p className="mt-2 text-gray-600">Sell surplus food, save the planet.</p></div>{children}</div></div>);
+const AuthLayout = ({ children }) => (<div className="min-h-screen w-full flex items-center justify-center bg-[#EFE3C2] p-4"><div className="w-full max-w-md p-8 space-y-8 bg-white rounded-2xl shadow-lg"><div className="text-center"><h1 className="text-3xl font-bold text-[#123524]">Welcome to LeftOver</h1><p className="mt-2 text-gray-600">Sell surplus food, save the planet.</p></div>{children}</div></div>);
 const LoginPage = ({ setView }) => (<AuthLayout><form className="mt-8 space-y-6"><div className="rounded-md shadow-sm -space-y-px"><div><input id="username" name="username" type="text" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-[#3E7B27] focus:border-[#3E7B27] focus:z-10 sm:text-sm" placeholder="Username" /></div><div><input id="password" name="password" type="password" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-[#3E7B27] focus:border-[#3E7B27] focus:z-10 sm:text-sm" placeholder="Password" /></div></div><div><button type="button" onClick={() => setView('dashboard')} className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#3E7B27] hover:bg-[#123524] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#85A947]">Sign In</button></div></form><p className="mt-2 text-center text-sm text-gray-600">Don't have an account?{' '}<a href="#" onClick={(e) => { e.preventDefault(); setView('register'); }} className="font-medium text-[#3E7B27] hover:text-[#123524]">Register now</a></p></AuthLayout>);
 const RegisterPage = ({ setView }) => (<AuthLayout><form className="mt-8 space-y-4"><input type="text" placeholder="Full Name" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#3E7B27] focus:border-[#3E7B27] text-gray-900" /><input type="email" placeholder="Email" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#3E7B27] focus:border-[#3E7B27] text-gray-900" /><input type="text" placeholder="Store Name" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#3E7B27] focus:border-[#3E7B27] text-gray-900" /><input type="text" placeholder="Full Store Location" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#3E7B27] focus:border-[#3E7B27] text-gray-900" /><select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#3E7B27] focus:border-[#3E7B27] text-gray-500"><option>Select Product Type</option><option>Cakes & Bread</option><option>Heavy Meals</option><option>Beverages</option><option>Other</option></select><div><button type="button" onClick={() => setView('dashboard')} className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#3E7B27] hover:bg-[#123524] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#85A947]">Register</button></div></form><p className="mt-2 text-center text-sm text-gray-600">Already have an account?{' '}<a href="#" onClick={(e) => { e.preventDefault(); setView('login'); }} className="font-medium text-[#3E7B27] hover:text-[#123524]">Sign in here</a></p></AuthLayout>);
 
@@ -1672,20 +1896,20 @@ const AddEditPromotionPage = ({ promo, allProducts, onSave, onCancel }) => {
 
             // Rule 1: Start time cannot be in the past.
             if (startDateTime < nowWIB) {
-                setDateError("Waktu mulai promosi tidak boleh sudah lewat.");
+                setDateError("The promotion start time cannot be in the past.");
                 return;
             }
             
             // Ensure end date is after start date
             if (endDateTime <= startDateTime) {
-                setDateError("Waktu selesai harus setelah waktu mulai.");
+                setDateError("The end time must be after the start time.");
                 return;
             }
 
             // Rule 2: Minimum duration is 3 days.
             const minDuration = 3 * 24 * 60 * 60 * 1000; // 3 days in milliseconds
             if (endDateTime.getTime() - startDateTime.getTime() < minDuration) {
-                setDateError("Durasi promosi minimal 3 hari.");
+                setDateError("The minimum promotion duration is 3 days.");
                 return;
             }
 
@@ -1693,7 +1917,7 @@ const AddEditPromotionPage = ({ promo, allProducts, onSave, onCancel }) => {
             const maxEndDateTime = new Date(startDateTime);
             maxEndDateTime.setMonth(maxEndDateTime.getMonth() + 3);
             if (endDateTime > maxEndDateTime) {
-                setDateError("Durasi promosi maksimal 3 bulan.");
+                setDateError("The maximum promotion duration is 3 months.");
                 return;
             }
 
@@ -1752,35 +1976,35 @@ const AddEditPromotionPage = ({ promo, allProducts, onSave, onCancel }) => {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <div className="space-y-6">
                             <Card className="p-6">
-                                <h3 className="text-lg font-semibold text-gray-800 mb-4">Detail Promosi</h3>
+                                <h3 className="text-lg font-semibold text-gray-800 mb-4">Promotion Details</h3>
                                 <div className="space-y-4">
                                     <div>
-                                        <label className="text-sm font-medium text-gray-700">Nama Promosi</label>
-                                        <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Contoh: Diskon Gajian" className="mt-1 block w-full bg-white rounded-md border-gray-300 shadow-sm focus:border-[#3E7B27] focus:ring focus:ring-[#3E7B27] focus:ring-opacity-50 text-gray-900" />
+                                        <label className="text-sm font-medium text-gray-700">Promotion Name</label>
+                                        <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Example: Payday Sale" className="mt-1 block w-full bg-white rounded-md border-gray-300 shadow-sm focus:border-[#3E7B27] focus:ring focus:ring-[#3E7B27] focus:ring-opacity-50 text-gray-900" />
                                     </div>
                                     <div>
-                                        <label className="text-sm font-medium text-gray-700">Deskripsi</label>
-                                        <textarea value={desc} onChange={e => setDesc(e.target.value)} rows="4" placeholder="Jelaskan promosi Anda..." className="mt-1 block w-full bg-white rounded-md border-gray-300 shadow-sm focus:border-[#3E7B27] focus:ring focus:ring-[#3E7B27] focus:ring-opacity-50 text-gray-900"></textarea>
+                                        <label className="text-sm font-medium text-gray-700">Description</label>
+                                        <textarea value={desc} onChange={e => setDesc(e.target.value)} rows="4" placeholder="Describe your promotion..." className="mt-1 block w-full bg-white rounded-md border-gray-300 shadow-sm focus:border-[#3E7B27] focus:ring focus:ring-[#3E7B27] focus:ring-opacity-50 text-gray-900"></textarea>
                                     </div>
                                 </div>
                             </Card>
                              <Card className="p-6">
-                                <h3 className="text-lg font-semibold text-gray-800 mb-4">Jadwal Promosi</h3>
+                                <h3 className="text-lg font-semibold text-gray-800 mb-4">Promotion Schedule</h3>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label className="text-sm font-medium text-gray-700">Tanggal Mulai</label>
+                                        <label className="text-sm font-medium text-gray-700">Start Date</label>
                                         <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="mt-1 block w-full bg-white rounded-md border-gray-300 shadow-sm focus:border-[#3E7B27] focus:ring focus:ring-[#3E7B27] focus:ring-opacity-50 text-gray-900" />
                                     </div>
                                     <div>
-                                        <label className="text-sm font-medium text-gray-700">Waktu Mulai</label>
+                                        <label className="text-sm font-medium text-gray-700">Start Time</label>
                                         <input type="time" value={startTime} onChange={e => setStartTime(e.target.value)} className="mt-1 block w-full bg-white rounded-md border-gray-300 shadow-sm focus:border-[#3E7B27] focus:ring focus:ring-[#3E7B27] focus:ring-opacity-50 text-gray-900" />
                                     </div>
                                      <div>
-                                        <label className="text-sm font-medium text-gray-700">Tanggal Selesai</label>
+                                        <label className="text-sm font-medium text-gray-700">End Date</label>
                                         <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} className="mt-1 block w-full bg-white rounded-md border-gray-300 shadow-sm focus:border-[#3E7B27] focus:ring focus:ring-[#3E7B27] focus:ring-opacity-50 text-gray-900" />
                                     </div>
                                     <div>
-                                        <label className="text-sm font-medium text-gray-700">Waktu Selesai</label>
+                                        <label className="text-sm font-medium text-gray-700">End Time</label>
                                         <input type="time" value={endTime} onChange={e => setEndTime(e.target.value)} className="mt-1 block w-full bg-white rounded-md border-gray-300 shadow-sm focus:border-[#3E7B27] focus:ring focus:ring-[#3E7B27] focus:ring-opacity-50 text-gray-900" />
                                     </div>
                                 </div>
@@ -1788,7 +2012,7 @@ const AddEditPromotionPage = ({ promo, allProducts, onSave, onCancel }) => {
                             </Card>
                         </div>
                         <Card className="p-6">
-                            <h3 className="text-lg font-semibold text-gray-800 mb-4">Pilih Produk & Diskon</h3>
+                            <h3 className="text-lg font-semibold text-gray-800 mb-4">Select Products & Discounts</h3>
                             <div className="space-y-3 max-h-96 overflow-y-auto pr-2">
                                 {promotableProducts.map(p => {
                                     const isIncluded = discountedProducts.some(dp => dp.productId === p.id);
@@ -1843,11 +2067,11 @@ const AddEditPromotionPage = ({ promo, allProducts, onSave, onCancel }) => {
             <div className="sticky bottom-0 bg-white/80 backdrop-blur-sm border-t border-gray-200">
                 <div className="max-w-4xl mx-auto p-4 flex justify-end items-center gap-4">
                     {!isFormValid && (
-                        <p className="text-sm text-red-600 mr-4">Silakan perbaiki error sebelum menyimpan.</p>
+                        <p className="text-sm text-red-600 mr-4">Please fix the errors before saving.</p>
                     )}
-                    <button onClick={onCancel} className="px-6 py-2 rounded-md font-semibold text-gray-700 bg-gray-200 hover:bg-gray-300 transition-colors">Batal</button>
+                    <button onClick={onCancel} className="px-6 py-2 rounded-md font-semibold text-gray-700 bg-gray-200 hover:bg-gray-300 transition-colors">Cancel</button>
                     <button onClick={handleSave} disabled={!isFormValid} className="px-6 py-2 rounded-md font-semibold text-white bg-[#3E7B27] hover:bg-[#123524] transition-colors shadow-sm hover:shadow-lg disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed">
-                        Simpan Promosi
+                        Save Promotion
                     </button>
                 </div>
             </div>
