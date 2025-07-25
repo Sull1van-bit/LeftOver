@@ -897,7 +897,7 @@ const Catalog = () => {
             </button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {surpriseBoxes.map((item) => {
+            {surpriseBoxes.slice(0,3).map((item) => {
               // Transform katalog data to product format
               const product = {
                 id: item.id,
@@ -939,8 +939,7 @@ const Catalog = () => {
             </button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {rescuedItems.map((item) => {
-              // Transform katalog data to product format for rescued items
+            {rescuedItems.slice(0,3).map((item) => {
               const product = {
                 id: item.id,
                 name: item.title,
