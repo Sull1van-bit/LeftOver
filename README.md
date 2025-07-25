@@ -2,16 +2,16 @@
 
 Aplikasi web modern yang menggunakan AI untuk memberikan rekomendasi resep berdasarkan bahan-bahan yang tersedia. Dibangun dengan React + Vite dan mengintegrasikan Google Gemini 2.0 Flash API.
 
-## ✨ Fitur Utama
+## Fitur Utama
 
-- 🍳 **Rekomendasi Resep AI**: Dapatkan saran resep berdasarkan bahan yang Anda miliki
-- 📝 **Input Teks**: Masukkan bahan-bahan secara manual
-- 📷 **Input Kamera**: Foto bahan-bahan untuk analisis otomatis
-- 🎨 **UI Modern**: Interface yang responsive dan user-friendly
-- 👤 **Sistem Login**: Autentikasi pengguna dengan profil
-- 📱 **Mobile Responsive**: Optimized untuk semua perangkat
+-  **Rekomendasi Resep AI**: Dapatkan saran resep berdasarkan bahan yang Anda miliki
+-  **Input Teks**: Masukkan bahan-bahan secara manual
+-  **Input Kamera**: Foto bahan-bahan untuk analisis otomatis
+-  **UI Modern**: Interface yang responsive dan user-friendly
+-  **Sistem Login**: Autentikasi pengguna dengan profil
+-  **Mobile Responsive**: Optimized untuk semua perangkat
 
-## 🚀 Teknologi yang Digunakan
+##  Teknologi yang Digunakan
 
 - **Frontend**: React 18, Vite
 - **Styling**: Tailwind CSS
@@ -19,7 +19,7 @@ Aplikasi web modern yang menggunakan AI untuk memberikan rekomendasi resep berda
 - **Camera**: WebRTC MediaDevices API
 - **Icons**: Heroicons
 
-## 📋 Prerequisites
+##  Prerequisites
 
 - Node.js (v16 atau lebih baru)
 - npm atau yarn
@@ -62,7 +62,7 @@ Aplikasi web modern yang menggunakan AI untuk memberikan rekomendasi resep berda
 6. **Buka browser**
    Aplikasi akan berjalan di `http://localhost:5173`
 
-## 🎯 Cara Menggunakan
+##  Cara Menggunakan
 
 ### Rekomendasi Resep dengan Input Teks
 1. Navigasi ke halaman "Recipe AI"
@@ -78,7 +78,7 @@ Aplikasi web modern yang menggunakan AI untuk memberikan rekomendasi resep berda
 5. Klik "Analisis Gambar"
 6. AI akan mengidentifikasi bahan dan memberikan rekomendasi resep
 
-## 📁 Struktur Project
+##  Struktur Project
 
 ```
 src/
@@ -95,7 +95,7 @@ src/
 └── App.jsx                     # Main app component
 ```
 
-## 🔧 API Configuration
+##  API Configuration
 
 Aplikasi menggunakan Google Gemini 2.0 Flash API dengan endpoint:
 ```
@@ -107,7 +107,7 @@ Format request mencakup:
 - Image input (base64) untuk analisis foto
 - Structured JSON response dengan resep yang diformat
 
-## 🎨 Features Detail
+##  Features Detail
 
 ### Input Methods
 - **Text Input**: Textarea untuk input manual bahan-bahan
@@ -127,30 +127,20 @@ Format request mencakup:
 - Responsive design untuk mobile dan desktop
 - Smooth transitions dan animations
 
-## 🚀 Build untuk Production
-
-```bash
-npm run build
-```
-
-File hasil build akan tersimpan di folder `dist/`.
-
-## 📄 License
+##  License
 
 This project is licensed under the MIT License.
 
-## 🤝 Contributing
-
-1. Fork the project
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 📞 Support
+##  Support
 
 Jika Anda mengalami masalah atau memiliki pertanyaan, silakan buat issue di repository ini.
 
+## Our team
+**cuman bisa html :**
+1. Victor Chandra
+2. Rafael Romelo Gibran
+3. Hansen Japri
+4. Naufal Rabbani
 ---
 
-**GarudaHacks 2025** - Bringing AI-powered cooking recommendations to your kitchen! 🍳✨
+**GarudaHacks 2025** - Transforming Food Waste into Delicious Possibilities!
